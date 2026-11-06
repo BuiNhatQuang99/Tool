@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiểm tra giao diện thân thiện với điện thoại - Tool-web</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{--blue:#2563eb;--ink:#172033;--muted:#64748b;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;background:#f8fafc;color:var(--ink);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{height:72px;background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:20}
+.nav{max-width:1500px;height:100%;margin:auto;padding:0 24px;display:flex;align-items:center;gap:30px}
+.logo{font-size:25px;font-weight:800;color:var(--blue);white-space:nowrap}.logo i{margin-right:10px}
+.nav a{color:#475569;text-decoration:none;font-weight:600}.nav a.active{color:var(--blue);background:#eff6ff;padding:12px 17px;border-radius:16px}
+.search{margin-left:auto;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:18px;padding:10px 15px;width:260px;color:#94a3b8}
+main{max-width:1500px;margin:0 auto;padding:52px 24px 70px}.crumb{color:#64748b;margin-bottom:38px}.crumb b{color:#111827;font-weight:600}
+.part{font-size:14px;color:#64748b;margin-bottom:16px}.pill{color:#2563eb;background:#eff6ff;border-radius:20px;padding:5px 13px;margin:0 6px}
+.heading{display:flex;align-items:center;gap:20px}.heading-icon{width:68px;height:68px;border-radius:20px;background:#dbeafe;color:#2563eb;display:grid;place-items:center;font-size:30px}
+h1{font-size:42px;line-height:1.15;margin:0;font-weight:800;color:#101827}.subtitle{font-size:18px;color:#64748b;margin-top:5px}
+.desc{line-height:1.7;color:#475569;margin:20px 0 8px}.stars{color:#cbd5e1;font-size:27px;letter-spacing:5px;margin:6px 0 24px}
+.notice{border:1px solid #edf0f4;border-radius:16px;padding:15px 20px;color:#64748b;margin:20px 0 28px}.notice .top{font-size:14px;margin-bottom:8px}.notice i{color:#16a34a;margin-right:8px}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:36px;align-items:start}
+.panel{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:28px}
+.tabs{display:flex;gap:9px;margin-bottom:22px}.tab{border:0;border-radius:18px;padding:9px 18px;background:#f1f5f9;color:#334155;cursor:pointer;font-weight:600}.tab.active{background:#2563eb;color:white}
+label{display:block;font-weight:600;margin:12px 0 8px;color:#334155}
+textarea,input{width:100%;border:1px solid #e2e8f0;border-radius:16px;background:#f8fafc;padding:15px;font:14px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;color:#334155;outline:none}
+textarea{height:300px;resize:vertical}input{font-family:inherit}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:18px 0 22px}
+button.primary{background:#2563eb;color:#fff;border:0;border-radius:14px;padding:12px 20px;font-weight:700;cursor:pointer}
+button.secondary{background:#f1f5f9;color:#334155;border:0;border-radius:14px;padding:12px 20px;font-weight:600;cursor:pointer}
+button:disabled{opacity:.45;cursor:not-allowed}
+.preview-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;color:#475569;font-weight:600}
+.devicebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.device{border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:8px 12px;color:#475569;cursor:pointer}.device.active{background:#eff6ff;border-color:#93c5fd;color:#2563eb}
+.frame-wrap{background:#f1f5f9;border:1px solid #e2e8f0;border-radius:18px;padding:18px;min-height:430px;display:flex;justify-content:center;align-items:flex-start;overflow:auto}
+.frame-shell{background:white;border:1px solid #cbd5e1;border-radius:20px;padding:9px;box-shadow:0 5px 18px #0f172a12;transition:width .2s;width:390px;max-width:100%}
+.frame-shell iframe{width:100%;height:650px;border:0;border-radius:12px;background:white;display:block}
+.results{margin-top:20px;border:1px solid #e2e8f0;border-radius:16px;padding:18px;background:#fff}
+.result-item{display:flex;gap:12px;padding:9px 0;color:#475569}.good{color:#16a34a}.warn{color:#d97706}.bad{color:#dc2626}
+.side-title{font-size:16px;font-weight:700;color:#64748b;margin:4px 0 18px}.related{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:22px;margin-bottom:16px}.related .ico{width:48px;height:48px;border-radius:15px;background:#dbeafe;color:#2563eb;display:grid;place-items:center;margin-bottom:16px;font-size:20px}.related b{display:block;font-size:18px;margin-bottom:6px}.related p{margin:0;color:#64748b;line-height:1.5}
+.info-card{background:#fff;border:1px solid #e2e8f0;border-radius:20px;padding:28px;margin-top:26px}.info-card h2{font-size:24px;font-weight:800;margin:0 0 18px}.step{display:flex;align-items:center;gap:15px;color:#475569;margin:14px 0}.num{width:30px;height:30px;border-radius:50%;background:#dbeafe;color:#2563eb;display:grid;place-items:center;font-weight:700}
+.hidden{display:none!important}.url-note{font-size:13px;color:#64748b;margin-top:8px}
+@media(max-width:900px){.nav{gap:14px;padding:0 15px}.nav a{display:none}.search{width:180px}main{padding:30px 15px}.layout{grid-template-columns:1fr}.side{display:none}h1{font-size:32px}.panel{padding:18px}}
+@media(max-width:520px){.search{display:none}.heading-icon{width:54px;height:54px}.heading{gap:12px}h1{font-size:27px}.subtitle{font-size:15px}.panel{padding:14px}.frame-wrap{padding:8px}.frame-shell iframe{height:560px}}
+</style>
+</head>
+<body>
+<header><div class="nav">
+<div class="logo"><i class="fa-solid fa-screwdriver-wrench"></i>Tool-web</div>
+<a href="#">Trang chủ</a><a href="#" class="active">Công cụ</a><a href="#">Danh mục</a><a href="#">Bài viết</a><a href="#">Yêu thích</a><a href="#">Giới thiệu</a><a href="#">Liên hệ</a>
+<div class="search"><i class="fa-solid fa-magnifying-glass"></i>　Tìm kiếm công cụ...</div><i class="fa-regular fa-moon" style="font-size:22px;color:#64748b"></i>
+</div></header>
+<main>
+<div class="crumb">Trang chủ　/　Công cụ SEO　/　<b>Kiểm tra giao diện điện thoại</b></div>
+<div class="part">Thuộc danh mục <span class="pill">Công cụ SEO</span> cụm công cụ</div>
+<div class="heading"><div class="heading-icon"><i class="fa-solid fa-globe"></i></div><div><h1>Kiểm tra giao diện điện thoại</h1><div class="subtitle">Kiểm tra cách trang web hiển thị trên các thiết bị di động</div></div></div>
+<p class="desc">Kiểm tra khả năng hiển thị và bố cục trang web trên nhiều kích thước màn hình. Dán mã HTML để xem trước trực tiếp, thay đổi kích thước thiết bị và kiểm tra một số thiết lập thân thiện với điện thoại.</p>
+<div class="stars">☆ ☆ ☆ ☆ ☆</div>
+<div class="notice"><div class="top"><i class="fa-solid fa-shield-halved"></i> Kết nối an toàn　 |　 <i class="fa-solid fa-flask"></i> Chế độ dán mã xử lý ngay trên trình duyệt</div>Ở chế độ dán mã, nội dung của bạn chỉ được xử lý trên trình duyệt và không gửi lên máy chủ Tool-web.</div>
+<div class="layout">
+<section>
+<div class="panel">
+<div class="tabs"><button class="tab active" id="htmlTab">Mã HTML</button><button class="tab" id="urlTab">Địa chỉ trang web</button></div>
+<div id="pasteMode">
+<label for="htmlInput">Dán mã HTML của bạn</label>
+<textarea id="htmlInput" spellcheck="false" placeholder="Dán mã HTML vào đây..."><!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trang mẫu</title>
+<style>
+body { font-family: Arial, sans-serif; padding: 24px; color: #1e293b; }
+h1 { color: #2563eb; }
+.card { background: #eff6ff; padding: 20px; border-radius: 12px; }
+button { background: #2563eb; color: white; border: 0; padding: 12px 20px; border-radius: 8px; }
+</style>
+</head>
+<body>
+<div class="card">
+<h1>Xin chào!</h1>
+<p>Chỉnh sửa mã HTML ở bên trái để xem thay đổi trực tiếp.</p>
+<button onclick="alert('Xin chào!')">Nhấn vào đây</button>
+</div>
+</body>
+</html></textarea>
+<div class="actions"><button class="primary" id="testBtn"><i class="fa-solid fa-play"></i> Kiểm tra</button><button class="secondary" id="resetBtn">Đặt lại</button><button class="secondary" id="sampleBtn">Nạp mã mẫu</button></div>
+</div>
+<div id="urlMode" class="hidden">
+<label for="urlInput">Nhập địa chỉ trang web</label><input id="urlInput" type="url" placeholder="https://vidu.com">
+<div class="url-note">Một số trang web không cho phép hiển thị trong khung xem trước. Khi đó, hãy dùng chế độ dán mã HTML để kiểm tra.</div>
+<div class="actions"><button class="primary" id="openUrlBtn">Mở xem trước</button><button class="secondary" id="clearUrlBtn">Xóa địa chỉ</button></div>
+</div>
+<div class="preview-head"><span>Xem trước trực tiếp</span><span id="sizeLabel">Điện thoại · 390 px</span></div>
+<div class="devicebar">
+<button class="device active" data-width="390" data-name="Điện thoại">Điện thoại</button>
+<button class="device" data-width="768" data-name="Máy tính bảng">Máy tính bảng</button>
+<button class="device" data-width="1024" data-name="Máy tính">Máy tính</button>
+<button class="device" data-width="360" data-name="Điện thoại nhỏ">Điện thoại nhỏ</button>
+</div>
+<div class="frame-wrap"><div class="frame-shell" id="frameShell" style="width:390px"><iframe id="preview" title="Khung xem trước" sandbox="allow-scripts allow-forms"></iframe></div></div>
+<div class="results"><h3 style="font-weight:800;font-size:18px;margin:0 0 8px">Kết quả kiểm tra cơ bản</h3><div id="checks"><div class="result-item">Dán mã HTML rồi nhấn “Kiểm tra” để xem các gợi ý về giao diện điện thoại.</div></div></div>
+</div>
+<div class="info-card"><h2>Cách sử dụng</h2>
+<div class="step"><span class="num">1</span> Dán mã HTML hoặc nhập địa chỉ trang web.</div>
+<div class="step"><span class="num">2</span> Chọn kích thước thiết bị muốn kiểm tra.</div>
+<div class="step"><span class="num">3</span> Xem trước cách trang hiển thị trong khung mô phỏng.</div>
+<div class="step"><span class="num">4</span> Đọc các gợi ý để cải thiện khả năng hiển thị trên điện thoại.</div></div>
+<div class="info-card"><h2>Tính năng</h2>
+<div class="step"><i class="fa-solid fa-check good"></i> Mô phỏng nhiều kích thước màn hình.</div>
+<div class="step"><i class="fa-solid fa-check good"></i> Xem trước HTML trực tiếp khi chỉnh sửa.</div>
+<div class="step"><i class="fa-solid fa-check good"></i> Kiểm tra thẻ viewport và một số thuộc tính ảnh.</div>
+<div class="step"><i class="fa-solid fa-check good"></i> Chế độ xem địa chỉ trang web bằng khung nhúng.</div></div>
+</section>
+<aside class="side"><div class="side-title">CÔNG CỤ LIÊN QUAN</div>
+<div class="related"><div class="ico"><i class="fa-solid fa-globe"></i></div><b>Phân tích thẻ Meta</b><p>Phân tích và xem trước các thẻ Meta của trang web.</p></div>
+<div class="related"><div class="ico"><i class="fa-solid fa-globe"></i></div><b>Kiểm tra mật độ từ khóa</b><p>Kiểm tra mật độ và cách phân bố từ khóa trong nội dung.</p></div>
+<div class="related"><div class="ico"><i class="fa-solid fa-globe"></i></div><b>Công cụ xem trước kết quả tìm kiếm</b><p>Xem trước cách trang web xuất hiện trên công cụ tìm kiếm.</p></div>
+<div class="related"><div class="ico"><i class="fa-solid fa-globe"></i></div><b>Kiểm tra chứng chỉ SSL</b><p>Kiểm tra tính hợp lệ và thông tin chứng chỉ SSL.</p></div>
+<div class="related"><b>BÀI VIẾT LIÊN QUAN</b><p style="margin-top:15px;color:#172033">15 công cụ SEO thiết yếu mà mọi chủ website nên biết</p><p style="margin-top:12px;color:#172033">Cách phân tích hiệu suất SEO của website</p></div>
+</aside>
+</div>
+</main>
+<script>
+const input=document.getElementById('htmlInput'), frame=document.getElementById('preview'), shell=document.getElementById('frameShell');
+const sample=input.value;
+function render(){frame.srcdoc=input.value;runChecks()}
+function runChecks(){
+ const doc=new DOMParser().parseFromString(input.value,'text/html');
+ const viewport=doc.querySelector('meta[name="viewport"]');
+ const images=[...doc.images], missing=images.filter(x=>!x.hasAttribute('alt')).length;
+ const fixed=[...doc.querySelectorAll('*')].filter(el=>{const s=el.getAttribute('style')||'';return /width\s*:\s*\d{4,}px/i.test(s)}).length;
+ const checks=[
+ [!!viewport,'Thẻ viewport',viewport?'Đã có thẻ viewport.':'Chưa tìm thấy thẻ viewport. Hãy thêm thẻ meta viewport để trang co giãn đúng trên điện thoại.'],
+ [missing===0,'Văn bản thay thế cho ảnh',missing===0?'Các ảnh đều có thuộc tính alt hoặc chưa có ảnh.':missing+' ảnh chưa có thuộc tính alt.'],
+ [fixed===0,'Chiều rộng phần tử',fixed===0?'Không phát hiện chiều rộng cố định quá lớn trong thuộc tính style.':'Có phần tử đặt chiều rộng cố định lớn, có thể gây tràn màn hình.'],
+ [/<meta[^>]+charset/i.test(input.value),'Khai báo bảng mã',/<meta[^>]+charset/i.test(input.value)?'Đã khai báo bảng mã ký tự.':'Nên khai báo thẻ meta charset="UTF-8".']
+ ];
+ document.getElementById('checks').innerHTML=checks.map(c=>`<div class="result-item"><i class="fa-solid ${c[0]?'fa-circle-check good':'fa-circle-exclamation warn'}"></i><div><b>${c[1]}:</b> ${c[2]}</div></div>`).join('');
+}
+document.getElementById('testBtn').onclick=render;
+input.addEventListener('input',()=>{clearTimeout(window.previewTimer);window.previewTimer=setTimeout(render,450)});
+document.getElementById('resetBtn').onclick=()=>{input.value='';frame.srcdoc='';document.getElementById('checks').innerHTML='<div class="result-item">Đã xóa nội dung kiểm tra.</div>'};
+document.getElementById('sampleBtn').onclick=()=>{input.value=sample;render()};
+document.querySelectorAll('.device').forEach(btn=>btn.onclick=()=>{document.querySelectorAll('.device').forEach(x=>x.classList.remove('active'));btn.classList.add('active');shell.style.width=btn.dataset.width+'px';document.getElementById('sizeLabel').textContent=btn.dataset.name+' · '+btn.dataset.width+' px'});
+function mode(url){document.getElementById('pasteMode').classList.toggle('hidden',url);document.getElementById('urlMode').classList.toggle('hidden',!url);document.getElementById('htmlTab').classList.toggle('active',!url);document.getElementById('urlTab').classList.toggle('active',url)}
+document.getElementById('htmlTab').onclick=()=>mode(false);document.getElementById('urlTab').onclick=()=>mode(true);
+document.getElementById('openUrlBtn').onclick=()=>{let u=document.getElementById('urlInput').value.trim();if(!u)return alert('Vui lòng nhập địa chỉ trang web.');if(!/^https?:\/\//i.test(u))u='https://'+u;frame.src=u};
+document.getElementById('clearUrlBtn').onclick=()=>{document.getElementById('urlInput').value='';frame.srcdoc=''};
+render();
+</script>
+</body></html>
