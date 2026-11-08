@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Công cụ định dạng SQL - Tool-web</title>
+  <meta name="description" content="Định dạng, làm đẹp và rút gọn câu lệnh SQL trực tuyến. Hỗ trợ nhiều hệ quản trị cơ sở dữ liệu.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sql-formatter@15.6.6/dist/sql-formatter.min.js"></script>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;background:#f8fafc;color:#172033;font-family:Arial,Helvetica,sans-serif}
+    .wrap{max-width:1510px;margin:auto;padding:0 28px}
+    .topbar{height:72px;background:#fff;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:20}
+    .brand{font-size:25px;font-weight:750;color:#2563eb;white-space:nowrap}
+    .nav a{padding:12px 15px;border-radius:16px;color:#475569;text-decoration:none;font-weight:600}
+    .nav a.active{background:#eff6ff;color:#2563eb}
+    .search{border:1px solid #e2e8f0;background:#f3f4f6;border-radius:16px;padding:10px 14px;width:250px}
+    .main{padding-top:55px;padding-bottom:60px}
+    .muted{color:#64748b}
+    .panel{background:white;border:1px solid #dfe4eb;border-radius:20px}
+    .notice{border:1px solid #edf0f4;border-radius:16px;padding:17px 20px;background:#fafbfc}
+    .tool-layout{display:grid;grid-template-columns:minmax(0,1fr) 335px;gap:36px;align-items:start}
+    .editor-card{padding:28px}
+    .pill{border:0;border-radius:22px;padding:9px 16px;background:#f1f3f6;color:#334155;cursor:pointer}
+    .pill.selected{background:#2563eb;color:white}
+    textarea{font-family:Consolas,Monaco,monospace;resize:vertical}
+    #sqlInput{width:100%;min-height:300px;border:2px solid #3b82f6;border-radius:20px;padding:20px;background:#f9fafb;color:#334155;font-size:14px;line-height:1.8;outline:none}
+    .btn{border:0;border-radius:15px;padding:12px 19px;font-weight:650;cursor:pointer}
+    .btn-primary{background:#2563eb;color:white}.btn-primary:hover{background:#1d4ed8}
+    .btn-soft{background:#eff6ff;color:#2563eb}.btn-gray{background:#f1f3f5;color:#172033}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .result{min-height:105px;border:1px dashed #dbe2ea;border-radius:18px;padding:20px;color:#64748b;background:#fbfcfd;white-space:pre-wrap;overflow:auto;font:14px/1.8 Consolas,monospace}
+    .side-card{padding:22px;margin-bottom:15px}
+    .side-icon{width:48px;height:48px;border-radius:15px;background:#dbeafe;color:#2563eb;display:grid;place-items:center;margin-bottom:16px}
+    .info-card{padding:28px;margin-top:28px}
+    .step{display:flex;align-items:center;gap:16px;margin:17px 0;color:#475569}
+    .number{width:29px;height:29px;border-radius:50%;background:#dbeafe;color:#2563eb;display:grid;place-items:center;flex:none;font-size:14px}
+    .check{color:#16a34a;font-size:20px;margin-right:12px}
+    @media(max-width:950px){.tool-layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.side-card{margin:0}}
+    @media(max-width:700px){.wrap{padding:0 15px}.nav{display:none}.search{width:150px}.main{padding-top:30px}.editor-card{padding:16px}#sqlInput{min-height:250px}.sidebar{grid-template-columns:1fr}.brand{font-size:21px}}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap h-full flex items-center justify-between gap-5">
+    <div class="flex items-center gap-3">
+      <i data-lucide="wrench" class="text-blue-600" style="width:34px;height:34px"></i>
+      <span class="brand">Tool-web</span>
+    </div>
+    <nav class="nav flex items-center gap-1">
+      <a href="#">Trang chủ</a><a href="#" class="active">Công cụ</a><a href="#">Danh mục</a>
+      <a href="#">Bài viết</a><a href="#">Yêu thích</a><a href="#">Giới thiệu</a><a href="#">Liên hệ</a>
+    </nav>
+    <div class="flex items-center gap-4">
+      <input class="search" aria-label="Tìm kiếm công cụ" placeholder="Tìm kiếm công cụ...">
+      <button id="themeBtn" title="Đổi giao diện" class="text-slate-500"><i data-lucide="moon"></i></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap main">
+  <div class="text-sm muted mb-10">Trang chủ&nbsp; / &nbsp;Công cụ lập trình&nbsp; / &nbsp;<b class="text-slate-900">Định dạng SQL</b></div>
+  <div class="text-sm muted mb-5">Thuộc danh mục <span class="text-blue-600 bg-blue-50 rounded-full px-3 py-1 mx-1">Công cụ lập trình</span> cụm công cụ</div>
+  <div class="flex items-center gap-5 mb-4">
+    <div class="side-icon" style="width:68px;height:68px;margin:0"><i data-lucide="code-2" style="width:34px;height:34px"></i></div>
+    <div>
+      <h1 class="text-4xl font-bold text-slate-900">Công cụ định dạng SQL</h1>
+      <p class="muted text-lg mt-1">Định dạng và làm đẹp câu lệnh SQL dễ đọc hơn</p>
+    </div>
+    <button id="favoriteBtn" class="ml-2 rounded-2xl bg-slate-100 p-3 text-slate-400" title="Thêm vào yêu thích"><i data-lucide="heart"></i></button>
+  </div>
+  <p class="muted leading-7 mb-4">Công cụ giúp sắp xếp và trình bày câu lệnh SQL rõ ràng, dễ đọc. Hỗ trợ 7 hệ quản trị cơ sở dữ liệu: SQL tiêu chuẩn, MySQL, PostgreSQL, SQLite, BigQuery, Snowflake và T-SQL. Dán câu lệnh, chọn hệ quản trị rồi định dạng, rút gọn, sao chép hoặc tải kết quả về máy.</p>
+  <div class="flex gap-2 text-slate-300 text-3xl mb-6" id="rating">
+    <button aria-label="Đánh giá 1 sao">☆</button><button aria-label="Đánh giá 2 sao">☆</button><button aria-label="Đánh giá 3 sao">☆</button><button aria-label="Đánh giá 4 sao">☆</button><button aria-label="Đánh giá 5 sao">☆</button>
+  </div>
+  <div class="notice mb-5">
+    <div class="flex items-center gap-3 text-sm muted mb-2"><span class="text-green-600">♧</span> Kết nối an toàn HTTPS <span class="text-slate-300">|</span><span class="text-green-600">♧</span> Xử lý ngay trên trình duyệt</div>
+    <p class="muted">Toàn bộ quá trình xử lý diễn ra ngay trên trình duyệt. Nội dung câu lệnh của bạn không được gửi lên máy chủ Tool-web.</p>
+  </div>
+
+  <div class="tool-layout">
+    <section>
+      <div class="panel editor-card">
+        <label class="block text-sm font-semibold text-slate-600 mb-2" for="dialect">Hệ quản trị cơ sở dữ liệu</label>
+        <div class="flex flex-wrap gap-2 mb-6" id="dialects">
+          <button class="pill selected" data-dialect="sql">SQL tiêu chuẩn</button>
+          <button class="pill" data-dialect="mysql">MySQL</button>
+          <button class="pill" data-dialect="postgresql">PostgreSQL</button>
+          <button class="pill" data-dialect="sqlite">SQLite</button>
+          <button class="pill" data-dialect="bigquery">BigQuery</button>
+          <button class="pill" data-dialect="snowflake">Snowflake</button>
+          <button class="pill" data-dialect="transactsql">T-SQL</button>
+        </div>
+        <div class="flex justify-between items-center mb-2">
+          <label for="sqlInput" class="font-semibold text-slate-700">Câu lệnh SQL</label>
+          <span class="text-xs muted" id="stats">0 ký tự&nbsp;&nbsp; 0 dòng&nbsp;&nbsp; 0 byte</span>
+        </div>
+        <textarea id="sqlInput" spellcheck="false" placeholder="Dán câu lệnh SQL của bạn vào đây...">SELECT u.id, u.name, COUNT(o.id) AS order_count
+FROM users u
+LEFT JOIN orders o ON u.id = o.user_id
+WHERE u.active = 1
+GROUP BY u.id, u.name
+HAVING COUNT(o.id) > 5
+ORDER BY order_count DESC;</textarea>
+        <div class="flex flex-wrap gap-2 mt-5 items-center">
+          <button id="formatBtn" class="btn btn-primary">Định dạng</button>
+          <span class="text-xs muted">Ctrl + Enter</span>
+          <button id="minifyBtn" class="btn btn-soft">Rút gọn</button>
+          <button id="copyBtn" class="btn btn-soft">▢ Sao chép</button>
+          <button id="downloadBtn" class="btn btn-soft">↓ Tải xuống</button>
+          <button id="shareBtn" class="btn btn-gray">Chia sẻ</button>
+          <button id="resetBtn" class="btn btn-gray">Đặt lại</button>
+        </div>
+        <div class="mt-6">
+          <div class="font-semibold text-slate-700 mb-2">Kết quả sau khi xử lý</div>
+          <pre id="result" class="result">Nhập câu lệnh SQL rồi chọn Định dạng hoặc Rút gọn để xem kết quả.</pre>
+          <p id="message" class="text-sm mt-3 text-blue-600" role="status"></p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-4 mt-7 mb-7 muted">Thao tác:
+        <button id="shareAction" class="btn btn-gray border border-slate-200">♧ &nbsp;Chia sẻ</button>
+      </div>
+
+      <div class="panel info-card">
+        <h2 class="text-2xl font-bold mb-5">Cách sử dụng</h2>
+        <div class="step"><span class="number">1</span> Dán câu lệnh SQL vào khung nhập liệu.</div>
+        <div class="step"><span class="number">2</span> Chọn hệ quản trị cơ sở dữ liệu phù hợp.</div>
+        <div class="step"><span class="number">3</span> Chọn Định dạng hoặc Rút gọn để xử lý câu lệnh.</div>
+        <div class="step"><span class="number">4</span> Sao chép hoặc tải kết quả về máy.</div>
+      </div>
+      <div class="panel info-card">
+        <h2 class="text-2xl font-bold mb-5">Tính năng nổi bật</h2>
+        <p class="mb-3"><span class="check">✓</span>Hỗ trợ 7 hệ quản trị cơ sở dữ liệu phổ biến</p>
+        <p class="mb-3"><span class="check">✓</span>Định dạng câu lệnh SQL tự động, dễ đọc</p>
+        <p class="mb-3"><span class="check">✓</span>Rút gọn câu lệnh để tiết kiệm dung lượng</p>
+        <p class="mb-3"><span class="check">✓</span>Sao chép và tải kết quả dưới dạng tệp .sql</p>
+        <p><span class="check">✓</span>Xử lý trực tiếp trên trình duyệt, bảo vệ nội dung</p>
+      </div>
+    </section>
+
+    <aside class="sidebar">
+      <div>
+        <h3 class="font-semibold text-slate-500 mb-4">CÔNG CỤ LIÊN QUAN</h3>
+        <div class="panel side-card"><div class="side-icon"><i data-lucide="braces"></i></div><h4 class="font-semibold text-lg mb-2">Định dạng JSON</h4><p class="muted leading-6">Kiểm tra, định dạng và làm đẹp dữ liệu JSON.</p></div>
+        <div class="panel side-card"><div class="side-icon"><i data-lucide="code"></i></div><h4 class="font-semibold text-lg mb-2">Mã hóa Base64</h4><p class="muted leading-6">Mã hóa và giải mã chuỗi Base64 nhanh chóng.</p></div>
+        <div class="panel side-card"><div class="side-icon"><i data-lucide="fingerprint"></i></div><h4 class="font-semibold text-lg mb-2">Tạo UUID</h4><p class="muted leading-6">Tạo mã định danh ngẫu nhiên cho dự án.</p></div>
+        <div class="panel side-card"><div class="side-icon"><i data-lucide="file-code"></i></div><h4 class="font-semibold text-lg mb-2">Rút gọn CSS</h4><p class="muted leading-6">Giảm dung lượng tệp CSS để tải trang nhanh hơn.</p></div>
+      </div>
+      <div class="panel side-card">
+        <h3 class="font-semibold text-slate-500 mb-5">BÀI VIẾT LIÊN QUAN</h3>
+        <p class="font-semibold mb-2">Những công cụ lập trình hữu ích dành cho lập trình viên</p><p class="muted text-sm mb-5">6 phút đọc</p>
+        <p class="font-semibold mb-2">Cách viết câu lệnh SQL dễ đọc và dễ bảo trì</p><p class="muted text-sm">8 phút đọc</p>
+      </div>
+    </aside>
+  </div>
+</main>
+<footer class="border-t border-slate-200 bg-white py-7 text-center muted text-sm">© 2026 Tool-web. Công cụ trực tuyến miễn phí.</footer>
+
+<script>
+  lucide.createIcons();
+  const input = document.getElementById('sqlInput');
+  const result = document.getElementById('result');
+  const message = document.getElementById('message');
+  let dialect = 'sql';
+  let latest = '';
+  const initial = input.value;
+
+  function updateStats(){
+    const value = input.value;
+    const chars = value.length;
+    const lines = value ? value.split(/\r\n|\r|\n/).length : 0;
+    const bytes = new TextEncoder().encode(value).length;
+    document.getElementById('stats').textContent = `${chars.toLocaleString('vi-VN')} ký tự   ${lines} dòng   ${bytes.toLocaleString('vi-VN')} byte`;
+  }
+  function notify(text, error=false){
+    message.textContent = text;
+    message.className = 'text-sm mt-3 ' + (error ? 'text-red-600' : 'text-blue-600');
+  }
+  function formatFallback(sql){
+    return sql.replace(/\s+/g,' ').replace(/\s*,\s*/g, ', ')
+      .replace(/\s+(FROM|WHERE|GROUP BY|HAVING|ORDER BY|LEFT JOIN|RIGHT JOIN|INNER JOIN|JOIN|ON|VALUES|SET)\s+/gi, '\n$1 ')
+      .replace(/\s+(AND|OR)\s+/gi, '\n  $1 ')
+      .replace(/\b(SELECT|INSERT INTO|UPDATE|DELETE FROM)\b/gi, '$1\n  ')
+      .replace(/;\s*/g, ';\n').trim();
+  }
+  function runFormat(minify=false){
+    const sql = input.value.trim();
+    if(!sql){notify('Vui lòng nhập câu lệnh SQL trước khi thực hiện.',true);return;}
+    try{
+      if(minify){
+        latest = sql.replace(/--[^\n\r]*/g,' ').replace(/\/\*[\s\S]*?\*\//g,' ')
+          .replace(/\s+/g,' ').replace(/\s*([,;()=<>])\s*/g,'$1').trim();
+      }else if(window.sqlFormatter && typeof window.sqlFormatter.format === 'function'){
+        latest = window.sqlFormatter.format(sql,{language:dialect, tabWidth:2, keywordCase:'upper', linesBetweenQueries:1});
+      }else{
+        latest = formatFallback(sql);
+      }
+      result.textContent = latest;
+      notify(minify ? 'Đã rút gọn câu lệnh SQL.' : 'Đã định dạng câu lệnh SQL thành công.');
+    }catch(err){
+      latest = formatFallback(sql);
+      result.textContent = latest;
+      notify('Không thể định dạng theo hệ quản trị đã chọn. Đã áp dụng cách định dạng cơ bản.',true);
+    }
+  }
+  input.addEventListener('input',updateStats);
+  document.getElementById('dialects').addEventListener('click',e=>{
+    const btn=e.target.closest('button[data-dialect]'); if(!btn)return;
+    document.querySelectorAll('#dialects button').forEach(b=>b.classList.remove('selected'));
+    btn.classList.add('selected'); dialect=btn.dataset.dialect;
+    notify('Đã chọn hệ quản trị: '+btn.textContent+'.');
+  });
+  document.getElementById('formatBtn').onclick=()=>runFormat(false);
+  document.getElementById('minifyBtn').onclick=()=>runFormat(true);
+  document.getElementById('copyBtn').onclick=async()=>{
+    const text=latest || result.textContent;
+    if(!text || text.startsWith('Nhập câu lệnh')){notify('Chưa có kết quả để sao chép.',true);return;}
+    try{await navigator.clipboard.writeText(text);notify('Đã sao chép kết quả vào bộ nhớ tạm.');}
+    catch(e){notify('Trình duyệt không cho phép sao chép tự động. Hãy chọn và sao chép nội dung kết quả.',true);}
+  };
+  document.getElementById('downloadBtn').onclick=()=>{
+    const text=latest || result.textContent;
+    if(!text || text.startsWith('Nhập câu lệnh')){notify('Chưa có kết quả để tải xuống.',true);return;}
+    const blob=new Blob([text],{type:'text/sql;charset=utf-8'});
+    const url=URL.createObjectURL(blob); const a=document.createElement('a');
+    a.href=url;a.download='sql-da-dinh-dang.sql';a.click();URL.revokeObjectURL(url);
+    notify('Đã tạo tệp SQL để tải xuống.');
+  };
+  function share(){
+    const url=new URL(location.href);
+    url.hash='sql='+encodeURIComponent(input.value);
+    if(navigator.share){navigator.share({title:'Câu lệnh SQL',text:'Câu lệnh SQL của tôi',url:url.href}).catch(()=>{});}
+    else if(navigator.clipboard){navigator.clipboard.writeText(url.href).then(()=>notify('Đã sao chép liên kết chia sẻ.')).catch(()=>notify('Không thể tạo liên kết chia sẻ.',true));}
+    else notify('Trình duyệt hiện không hỗ trợ chia sẻ.',true);
+  }
+  document.getElementById('shareBtn').onclick=share;
+  document.getElementById('shareAction').onclick=share;
+  document.getElementById('resetBtn').onclick=()=>{
+    input.value='';latest='';result.textContent='Nhập câu lệnh SQL rồi chọn Định dạng hoặc Rút gọn để xem kết quả.';
+    notify('Đã xóa nội dung.');updateStats();input.focus();
+  };
+  document.getElementById('favoriteBtn').onclick=e=>{
+    const btn=e.currentTarget;btn.classList.toggle('text-red-500');
+    btn.innerHTML=btn.classList.contains('text-red-500')?'♥':'♡';
+    notify(btn.classList.contains('text-red-500')?'Đã thêm công cụ vào danh sách yêu thích.':'Đã bỏ khỏi danh sách yêu thích.');
+  };
+  document.getElementById('rating').addEventListener('click',e=>{
+    const b=e.target.closest('button');if(!b)return;
+    const buttons=[...document.querySelectorAll('#rating button')], index=buttons.indexOf(b);
+    buttons.forEach((x,i)=>{x.textContent=i<=index?'★':'☆';x.style.color=i<=index?'#f59e0b':'#cbd5e1';});
+    notify('Cảm ơn bạn đã đánh giá công cụ!');
+  });
+  document.getElementById('themeBtn').onclick=()=>{
+    document.body.classList.toggle('dark');
+    const dark=document.body.classList.contains('dark');
+    document.body.style.background=dark?'#111827':'#f8fafc';
+    document.body.style.color=dark?'#e5e7eb':'#172033';
+    document.querySelectorAll('.panel,.notice,.topbar,footer').forEach(el=>{
+      el.style.background=dark?'#1f2937':'';
+      el.style.borderColor=dark?'#374151':'';
+    });
+    notify(dark?'Đã bật giao diện tối.':'Đã bật giao diện sáng.');
+  };
+  input.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();runFormat(false);}});
+  if(location.hash.startsWith('#sql=')){
+    try{input.value=decodeURIComponent(location.hash.slice(5));}catch(e){}
+  }
+  updateStats();
+</script>
+</body>
+</html>
