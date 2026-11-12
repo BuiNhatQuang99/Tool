@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cắt video trực tuyến - Tool-web</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--blue:#2864f0;--ink:#101828;--muted:#667085;--line:#e1e5eb;--bg:#f8fafc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+header{height:72px;background:#fff;border-bottom:1px solid #e8ebef;position:sticky;top:0;z-index:20}
+.nav{max-width:1500px;height:100%;margin:auto;padding:0 28px;display:flex;align-items:center;gap:34px}
+.brand{font-size:25px;font-weight:750;color:var(--blue);display:flex;align-items:center;gap:10px;white-space:nowrap}
+nav{display:flex;align-items:center;gap:8px}nav a{padding:12px 16px;border-radius:17px;text-decoration:none;color:#475467;font-weight:550}nav a.active{background:#eef5ff;color:var(--blue)}
+.search{margin-left:auto;width:265px;border:1px solid var(--line);border-radius:16px;background:#f3f4f6;padding:10px 14px;color:#98a2b3}
+main{max-width:1500px;margin:0 auto;padding:58px 28px 80px}
+.crumb{color:#667085;margin-bottom:38px}.crumb b{color:#101828;font-weight:600}
+.part{font-size:14px;color:#667085;margin-bottom:18px}.pill{background:#edf4ff;color:var(--blue);padding:5px 13px;border-radius:20px;margin:0 6px}
+.heading{display:flex;align-items:center;gap:20px;margin-bottom:8px}.appicon{width:67px;height:67px;background:#dceaff;color:var(--blue);border-radius:20px;display:grid;place-items:center}
+h1{font-size:42px;line-height:1.15;margin:0;font-weight:750;letter-spacing:-1px}.subtitle{font-size:18px;color:#667085;margin-top:5px}
+.description{color:#475467;line-height:1.7;margin:22px 0 8px}.stars{color:#cbd2dc;font-size:28px;letter-spacing:5px;margin-bottom:24px}
+.notice{border:1px solid #edf0f3;border-radius:16px;padding:15px 20px;margin:14px 0;color:#475467;background:rgba(255,255,255,.25)}
+.notice small{display:block;color:#667085;margin-bottom:7px}.green{color:#00a650}.layout{display:grid;grid-template-columns:minmax(0,1fr) 335px;gap:36px;margin-top:30px}
+.panel,.info{background:#fff;border:1px solid var(--line);border-radius:20px;padding:28px}
+.drop{border:2px dashed #cbd5e1;border-radius:20px;min-height:180px;display:flex;align-items:center;justify-content:center;text-align:center;cursor:pointer;color:#667085;transition:.2s}
+.drop:hover,.drop.drag{border-color:var(--blue);background:#f7faff}.drop svg{color:#98a2b3;margin-bottom:12px}
+.drop strong{display:block;font-size:17px;font-weight:500;color:#667085}.drop span{display:block;font-size:14px;color:#98a2b3;margin-top:8px}
+.hidden{display:none!important}.filebox{margin-top:18px;border:1px solid var(--line);border-radius:14px;padding:15px;display:flex;align-items:center;gap:14px}
+video{max-width:100%;max-height:340px;background:#101828;border-radius:12px;margin-top:18px}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:20px}.field label{display:block;font-weight:600;margin-bottom:8px}.field input{width:100%;border:1px solid var(--line);border-radius:11px;padding:11px 13px;font:inherit;color:#344054}
+.range{margin-top:18px}.range input{width:100%;accent-color:var(--blue)}.time-row{display:flex;justify-content:space-between;color:#667085;font-size:14px;margin-top:7px}
+.help{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:17px 20px;color:#667085;line-height:1.7;margin-top:20px}.help ul{padding-left:20px;margin:5px 0 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.btn{border:0;border-radius:14px;padding:12px 22px;font:inherit;font-weight:650;cursor:pointer;background:#f2f4f7;color:#344054}.btn.primary{background:#2864f0;color:#fff}.btn.primary:disabled{background:#d0d5dd;cursor:not-allowed}.btn:hover:not(:disabled){filter:brightness(.97)}
+.progress{height:9px;background:#eef1f5;border-radius:10px;overflow:hidden;margin-top:18px}.progress>div{height:100%;width:0;background:var(--blue);transition:width .2s}
+.status{margin-top:12px;color:#667085;font-size:14px;min-height:22px}.result{margin-top:18px;padding:15px;border:1px solid #b7e4c7;background:#f0fff5;border-radius:13px;color:#176b38}
+.side-title{font-size:16px;color:#667085;font-weight:650;margin:3px 0 18px}.related{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;margin-bottom:14px}.related .mini{width:48px;height:48px;background:#dceaff;color:var(--blue);border-radius:15px;display:grid;place-items:center;margin-bottom:16px}.related b{display:block;font-size:18px;font-weight:600}.related p{color:#667085;line-height:1.5;margin:6px 0 0}
+.info{margin-top:28px}.info h2{font-size:24px;margin:0 0 20px}.steps{display:grid;gap:17px;color:#475467}.step{display:flex;align-items:center;gap:14px}.num{width:30px;height:30px;border-radius:50%;background:#dceaff;color:var(--blue);display:grid;place-items:center;flex-shrink:0}
+footer{color:#98a2b3;text-align:center;padding:35px}
+@media(max-width:900px){nav{display:none}.layout{grid-template-columns:1fr}.side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.side-title{grid-column:1/-1}.related{margin:0}}
+@media(max-width:600px){main{padding:30px 15px}.nav{padding:0 15px}.search{display:none}h1{font-size:30px}.heading{gap:12px}.appicon{width:55px;height:55px}.panel,.info{padding:17px}.controls{grid-template-columns:1fr}.side{grid-template-columns:1fr}.crumb{font-size:14px}}
+</style>
+</head>
+<body>
+<header><div class="nav">
+  <div class="brand"><i data-lucide="wrench" width="34" height="34"></i>Tool-web</div>
+  <nav><a href="#">Trang chủ</a><a class="active" href="#">Công cụ</a><a href="#">Danh mục</a><a href="#">Bài viết</a><a href="#">Yêu thích</a><a href="#">Giới thiệu</a><a href="#">Liên hệ</a></nav>
+  <div class="search"><i data-lucide="search" width="16" style="vertical-align:middle"></i>　Tìm kiếm công cụ...</div>
+  <i data-lucide="moon" color="#667085"></i>
+</div></header>
+<main>
+  <div class="crumb">Trang chủ　/　Công cụ âm thanh & video　/　<b>Cắt video</b></div>
+  <div class="part">Thuộc danh mục <span class="pill">Công cụ âm thanh & video</span> cụm công cụ</div>
+  <div class="heading"><div class="appicon"><i data-lucide="clock-3" width="32" height="32"></i></div><div><h1>Cắt video</h1><div class="subtitle">Cắt video theo khoảng thời gian bạn mong muốn</div></div><button class="btn" id="favorite" title="Thêm vào yêu thích">♡</button></div>
+  <p class="description">Công cụ giúp cắt một đoạn video bằng cách chọn thời điểm bắt đầu và kết thúc. Video được xử lý trực tiếp trên trình duyệt bằng FFmpeg WebAssembly, không tải tệp lên máy chủ.</p>
+  <div class="stars" aria-label="Đánh giá">☆ ☆ ☆ ☆ ☆</div>
+  <div class="notice"><small>▢　Nội dung được cập nhật: 24 tháng 08, 2026</small></div>
+  <div class="notice"><small><span class="green">♧</span>　Kết nối HTTPS　 │　<span class="green">♧</span>　Xử lý ngay trên trình duyệt</small>Toàn bộ quá trình xử lý diễn ra trên trình duyệt. Video của bạn không được gửi lên máy chủ Tool-web.</div>
+  <div class="layout">
+    <div>
+      <section class="panel">
+        <input type="file" id="fileInput" accept="video/mp4,video/webm,video/quicktime,video/x-msvideo,video/x-matroska,.mp4,.webm,.mov,.avi,.mkv" class="hidden">
+        <div class="drop" id="dropZone" tabindex="0" role="button" aria-label="Chọn video">
+          <div><i data-lucide="video" width="36" height="36"></i><strong>Thả tệp video vào đây hoặc nhấn để chọn</strong><span>Hỗ trợ các định dạng MP4, WebM, AVI, MOV, MKV</span></div>
+        </div>
+        <div id="fileInfo" class="filebox hidden"><i data-lucide="file-video" color="#2864f0" width="28"></i><div style="flex:1;min-width:0"><b id="fileName">video.mp4</b><div id="fileSize" class="status"></div></div><button class="btn" id="removeFile">Xóa</button></div>
+        <video id="preview" controls class="hidden"></video>
+        <div id="editArea" class="hidden">
+          <div class="controls">
+            <div class="field"><label for="startTime">Thời điểm bắt đầu (giây)</label><input type="number" id="startTime" min="0" step="0.1" value="0"></div>
+            <div class="field"><label for="endTime">Thời điểm kết thúc (giây)</label><input type="number" id="endTime" min="0" step="0.1" value="0"></div>
+          </div>
+          <div class="range"><label><b>Chọn đoạn video cần giữ lại</b></label><input type="range" id="startRange" min="0" max="100" value="0"><div class="time-row"><span>Điểm bắt đầu: <b id="startLabel">00:00</b></span><span>Thời lượng: <b id="durationLabel">00:00</b></span></div></div>
+          <div class="range"><input type="range" id="endRange" min="0" max="100" value="100"><div class="time-row"><span>Điểm kết thúc: <b id="endLabel">00:00</b></span><span>Tổng thời lượng: <b id="totalLabel">00:00</b></span></div></div>
+        </div>
+        <div class="help"><b>Hướng dẫn nhanh:</b><ul><li>Tải lên một tệp video bằng khu vực phía trên.</li><li>Nhập thời điểm bắt đầu và kết thúc hoặc điều chỉnh thanh thời gian.</li><li>Nhấn “Cắt video” để xử lý.</li><li>Tải video đã cắt về thiết bị.</li></ul></div>
+        <div class="actions"><button class="btn primary" id="trimBtn" disabled>Cắt video</button><button class="btn" id="clearBtn">Xóa tất cả</button></div>
+        <div class="progress hidden" id="progress"><div id="progressBar"></div></div><div class="status" id="status"></div>
+        <div id="result" class="result hidden"></div>
+      </section>
+      <div class="actions" style="margin:24px 0 28px;color:#667085;align-items:center">Thao tác: <button class="btn" id="shareBtn">♧　Chia sẻ</button></div>
+      <section class="info"><h2>Cách sử dụng</h2><div class="steps"><div class="step"><span class="num">1</span>Chọn và tải video lên công cụ.</div><div class="step"><span class="num">2</span>Thiết lập thời điểm bắt đầu và kết thúc.</div><div class="step"><span class="num">3</span>Xem trước đoạn video đã chọn.</div><div class="step"><span class="num">4</span>Nhấn “Cắt video” và tải kết quả về.</div></div></section>
+      <section class="info"><h2>Tính năng</h2><div class="steps"><div>✓　Cắt video theo thời gian tùy chọn.</div><div>✓　Xem trước video ngay trên trình duyệt.</div><div>✓　Hỗ trợ nhiều định dạng video phổ biến.</div><div>✓　Không tải video lên máy chủ.</div></div></section>
+    </div>
+    <aside class="side"><div class="side-title">CÔNG CỤ LIÊN QUAN</div>
+      <div class="related"><div class="mini"><i data-lucide="clock-3"></i></div><b>Cắt âm thanh</b><p>Cắt tệp âm thanh theo thời lượng mong muốn.</p></div>
+      <div class="related"><div class="mini"><i data-lucide="clock-3"></i></div><b>Ghép âm thanh</b><p>Kết hợp nhiều tệp âm thanh thành một bản duy nhất.</p></div>
+      <div class="related"><div class="mini"><i data-lucide="clock-3"></i></div><b>Chuyển đổi định dạng âm thanh</b><p>Chuyển đổi tệp âm thanh giữa các định dạng.</p></div>
+      <div class="related"><div class="mini"><i data-lucide="clock-3"></i></div><b>Thay đổi tốc độ âm thanh</b><p>Điều chỉnh tốc độ phát của tệp âm thanh.</p></div>
+    </aside>
+  </div>
+</main>
+<footer>Tool-web　•　Công cụ trực tuyến miễn phí</footer>
+<script>
+lucide.createIcons();
+const $=id=>document.getElementById(id);
+let selectedFile=null,videoUrl=null,duration=0,ffmpeg=null,outputUrl=null;
+const formatTime=s=>{s=Math.max(0,Number(s)||0);const m=Math.floor(s/60),sec=Math.floor(s%60),ms=Math.floor((s%1)*10);return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}${ms?'.'+ms:''}`};
+function setStatus(t){$('status').textContent=t}
+function setProgress(v){$('progress').classList.remove('hidden');$('progressBar').style.width=Math.max(0,Math.min(100,v))+'%'}
+function resetOutput(){if(outputUrl){URL.revokeObjectURL(outputUrl);outputUrl=null}$('result').classList.add('hidden')}
+function loadFile(file){
+ if(!file)return;if(!file.type.startsWith('video/')&&!/\.(mp4|webm|mov|avi|mkv)$/i.test(file.name)){alert('Vui lòng chọn một tệp video hợp lệ.');return}
+ selectedFile=file;duration=0;resetOutput();if(videoUrl)URL.revokeObjectURL(videoUrl);videoUrl=URL.createObjectURL(file);
+ $('preview').src=videoUrl;$('preview').classList.remove('hidden');$('fileInfo').classList.remove('hidden');$('fileName').textContent=file.name;$('fileSize').textContent=(file.size/1024/1024).toFixed(2)+' MB';
+ $('editArea').classList.remove('hidden');$('trimBtn').disabled=true;setStatus('Đang đọc thông tin video...');
+ $('preview').onloadedmetadata=()=>{duration=$('preview').duration;if(!Number.isFinite(duration)||duration<=0){setStatus('Không thể đọc thời lượng video này.');return}
+ $('startTime').value='0';$('endTime').value=duration.toFixed(1);$('startRange').max=duration;$('endRange').max=duration;$('endRange').value=duration;
+ $('totalLabel').textContent=formatTime(duration);$('endLabel').textContent=formatTime(duration);$('durationLabel').textContent=formatTime(duration);$('trimBtn').disabled=false;setStatus('Đã tải video. Hãy chọn đoạn cần cắt.');};
+ $('preview').onerror=()=>setStatus('Trình duyệt không xem trước được tệp này, nhưng bạn vẫn có thể thử xử lý bằng FFmpeg.');
+}
+$('dropZone').onclick=()=>$('fileInput').click();$('dropZone').onkeydown=e=>{if(e.key==='Enter'||e.key===' ')$('fileInput').click()};
+$('fileInput').onchange=e=>loadFile(e.target.files[0]);
+$('dropZone').ondragover=e=>{e.preventDefault();$('dropZone').classList.add('drag')};$('dropZone').ondragleave=()=>$('dropZone').classList.remove('drag');
+$('dropZone').ondrop=e=>{e.preventDefault();$('dropZone').classList.remove('drag');loadFile(e.dataTransfer.files[0])};
+function syncFromRange(which){const start=Number($('startRange').value),end=Number($('endRange').value);if(which==='start'&&start>=end)$('startRange').value=Math.max(0,end-.1);if(which==='end'&&end<=start)$('endRange').value=Math.min(duration,start+.1);$('startTime').value=Number($('startRange').value).toFixed(1);$('endTime').value=Number($('endRange').value).toFixed(1);updateLabels()}
+function updateLabels(){const a=Number($('startTime').value)||0,b=Number($('endTime').value)||0;$('startLabel').textContent=formatTime(a);$('endLabel').textContent=formatTime(b);$('durationLabel').textContent=formatTime(Math.max(0,b-a));if(duration){$('startRange').value=Math.min(duration,a);$('endRange').value=Math.min(duration,b)}}
+$('startRange').oninput=()=>syncFromRange('start');$('endRange').oninput=()=>syncFromRange('end');
+$('startTime').onchange=()=>{let v=Math.max(0,Math.min(duration,Number($('startTime').value)||0));$('startTime').value=v;$('startRange').value=v;if(v>=Number($('endTime').value)){$('endTime').value=Math.min(duration,v+.1);$('endRange').value=$('endTime').value}updateLabels()};
+$('endTime').onchange=()=>{let v=Math.max(0,Math.min(duration,Number($('endTime').value)||0));if(v<=Number($('startTime').value))v=Math.min(duration,Number($('startTime').value)+.1);$('endTime').value=v;$('endRange').value=v;updateLabels()};
+$('startRange').onchange=()=>{$('preview').currentTime=Number($('startTime').value)||0};
+async function getFFmpeg(){
+ if(ffmpeg)return ffmpeg;setStatus('Đang tải bộ xử lý video lần đầu, vui lòng chờ...');
+ const {FFmpeg}=await import('https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js');
+ const {toBlobURL}=await import('https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js');
+ ffmpeg=new FFmpeg();ffmpeg.on('log',({message})=>{if(message)setStatus('Đang xử lý video...')});
+ ffmpeg.on('progress',({progress})=>{if(Number.isFinite(progress))setProgress(progress*100)});
+ const base='https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+ await ffmpeg.load({coreURL:await toBlobURL(base+'/ffmpeg-core.js','text/javascript'),wasmURL:await toBlobURL(base+'/ffmpeg-core.wasm','application/wasm')});
+ return ffmpeg;
+}
+$('trimBtn').onclick=async()=>{
+ if(!selectedFile)return;const start=Number($('startTime').value),end=Number($('endTime').value);
+ if(!Number.isFinite(start)||!Number.isFinite(end)||start<0||end<=start||end>duration+.05){alert('Vui lòng nhập khoảng thời gian hợp lệ.');return}
+ $('trimBtn').disabled=true;$('clearBtn').disabled=true;resetOutput();setProgress(2);
+ try{
+  const engine=await getFFmpeg();const ext=(selectedFile.name.split('.').pop()||'mp4').toLowerCase().replace(/[^a-z0-9]/g,'')||'mp4';
+  const input='video_input.'+ext,output='video_da_cat.mp4';
+  await engine.writeFile(input,new Uint8Array(await selectedFile.arrayBuffer()));
+  setStatus('Đang cắt video, vui lòng không đóng trang...');
+  await engine.exec(['-ss',String(start),'-i',input,'-t',String(end-start),'-c:v','libx264','-preset','ultrafast','-c:a','aac','-movflags','+faststart',output]);
+  const data=await engine.readFile(output);const blob=new Blob([data.buffer],{type:'video/mp4'});outputUrl=URL.createObjectURL(blob);
+  $('result').classList.remove('hidden');$('result').innerHTML=`<b>✓ Đã cắt video thành công!</b><p style="margin:8px 0 12px">Thời lượng đoạn video: ${formatTime(end-start)}</p><a id="downloadLink" download="video-da-cat.mp4" style="display:inline-block;background:#16803d;color:white;padding:10px 16px;border-radius:10px;text-decoration:none;font-weight:600">Tải video đã cắt</a>`;
+  $('downloadLink').href=outputUrl;setProgress(100);setStatus('Hoàn tất! Bạn có thể tải video đã cắt.');await engine.deleteFile(input);await engine.deleteFile(output);
+ }catch(err){console.error(err);setStatus('Không thể xử lý video. Hãy thử tệp khác hoặc tải lại trang. Chi tiết: '+(err.message||err));alert('Đã xảy ra lỗi khi cắt video. Có thể định dạng này chưa được hỗ trợ hoặc trình duyệt thiếu bộ nhớ.')}
+ finally{$('trimBtn').disabled=false;$('clearBtn').disabled=false}
+};
+function clearAll(){selectedFile=null;duration=0;$('fileInput').value='';$('preview').pause();$('preview').removeAttribute('src');$('preview').load();$('preview').classList.add('hidden');$('fileInfo').classList.add('hidden');$('editArea').classList.add('hidden');$('trimBtn').disabled=true;$('progress').classList.add('hidden');$('progressBar').style.width='0';setStatus('');resetOutput();if(videoUrl){URL.revokeObjectURL(videoUrl);videoUrl=null}}
+$('clearBtn').onclick=clearAll;$('removeFile').onclick=clearAll;
+$('shareBtn').onclick=async()=>{try{if(navigator.share)await navigator.share({title:'Cắt video - Tool-web',url:location.href});else{await navigator.clipboard.writeText(location.href);alert('Đã sao chép liên kết công cụ.')}}catch(e){}};
+$('favorite').onclick=()=>{const b=$('favorite');b.textContent=b.textContent==='♡'?'♥':'♡';b.style.color=b.textContent==='♥'?'#2864f0':'#667085'};
+document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'&&!$('trimBtn').disabled)$('trimBtn').click()});
+</script>
+</body></html>
