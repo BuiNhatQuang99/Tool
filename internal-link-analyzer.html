@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phân tích liên kết nội bộ - Tool-web</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--blue:#2563eb;--bg:#f8fafc;--card:#fff;--text:#172033;--muted:#64748b;--line:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+body.dark{--bg:#0f172a;--card:#172033;--text:#e5e7eb;--muted:#a3b0c2;--line:#334155}
+header{height:76px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10}
+.nav{max-width:1540px;height:100%;margin:auto;padding:0 18px;display:flex;align-items:center;gap:30px}
+.brand{font-size:25px;font-weight:750;color:var(--blue);white-space:nowrap;display:flex;align-items:center;gap:10px}
+.nav a{color:var(--text);text-decoration:none;padding:12px 14px;border-radius:16px;font-weight:550}.nav a.active{background:#eff6ff;color:var(--blue)}
+.search{margin-left:auto;width:270px;border:1px solid var(--line);border-radius:16px;background:var(--bg);padding:10px 14px;color:var(--muted)}
+.iconbtn{border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:22px}
+.container{max-width:1540px;margin:0 auto;padding:52px 18px}
+.breadcrumb{color:var(--muted);margin-bottom:38px}.breadcrumb span{margin:0 10px}
+.cluster{font-size:14px;color:var(--muted);margin-bottom:18px}.pill{color:var(--blue);background:#eff6ff;padding:4px 12px;border-radius:20px;margin:0 7px}
+.heading{display:flex;align-items:center;gap:20px}.appicon{width:68px;height:68px;border-radius:22px;background:#dbeafe;color:var(--blue);display:grid;place-items:center}
+h1{font-size:42px;line-height:1.15;margin:0;font-weight:780;letter-spacing:-1px}.subtitle{font-size:18px;color:var(--muted);margin-top:7px}
+.heart{border:0;border-radius:16px;background:#f1f5f9;color:#94a3b8;padding:13px;cursor:pointer}
+.intro{line-height:1.65;color:#475569;margin:22px 0 8px}.stars{color:#cbd5e1;font-size:30px;letter-spacing:5px;margin-bottom:24px}
+.notice{border:1px solid var(--line);border-radius:16px;padding:15px 20px;margin:18px 0;color:var(--muted);background:var(--card)}
+.notice strong{color:#059669;font-weight:600}.notice p{margin:8px 0 0;color:var(--text)}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:38px;margin-top:28px}
+.panel,.sidecard,.contentcard{background:var(--card);border:1px solid var(--line);border-radius:20px}
+.panel{padding:28px;margin-bottom:28px}.inputrow{display:flex;gap:12px}
+input[type=url]{flex:1;min-width:0;border:2px solid #3b82f6;border-radius:17px;padding:16px 20px;font-size:16px;background:var(--card);color:var(--text);outline:none}
+button.primary,button.secondary{border:0;border-radius:16px;padding:14px 24px;font-weight:650;cursor:pointer}
+.primary{background:var(--blue);color:white}.primary:disabled{background:#cbd5e1;cursor:not-allowed}
+.secondary{background:#e5e7eb;color:#334155}.help{margin-top:28px;padding:28px;border:1px solid var(--line);border-radius:20px;background:var(--card)}
+h2{font-size:23px;font-weight:750;margin:0 0 20px}.steps{list-style:none;padding:0;margin:0}.steps li{display:flex;align-items:center;gap:15px;color:var(--muted);margin:14px 0}.num{width:30px;height:30px;border-radius:50%;background:#dbeafe;color:var(--blue);display:grid;place-items:center;font-size:14px}
+.sideheading{color:var(--muted);font-weight:650;margin:2px 0 18px}.sidecard{padding:22px;margin-bottom:15px}.sideicon{width:50px;height:50px;background:#dbeafe;color:var(--blue);border-radius:15px;display:grid;place-items:center;margin-bottom:16px}.sidecard h3{font-size:18px;margin:0 0 8px}.sidecard p{color:var(--muted);margin:0;line-height:1.5}
+.actions{display:flex;align-items:center;gap:14px;color:var(--muted);margin:20px 0 28px}.share{background:var(--card);border:1px solid var(--line);padding:12px 20px;border-radius:15px;color:var(--text);cursor:pointer}
+.result{display:none;margin-top:24px}.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}.stat{background:var(--bg);border:1px solid var(--line);padding:16px;border-radius:14px}.stat b{display:block;font-size:25px;color:var(--blue)}.stat span{font-size:13px;color:var(--muted)}
+.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:13px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:650;background:var(--bg)}td a{color:var(--blue);word-break:break-all}
+.status{padding:4px 9px;border-radius:20px;background:#dcfce7;color:#15803d;font-size:12px}.status.warn{background:#fef3c7;color:#a16207}
+.smallnote{color:var(--muted);font-size:13px;line-height:1.6}.error{color:#b91c1c;background:#fee2e2;padding:12px;border-radius:12px;display:none;margin-top:15px}
+footer{text-align:center;color:var(--muted);padding:40px 15px}
+@media(max-width:900px){.nav{gap:8px}.nav a{display:none}.search{width:190px}.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.sideheading{grid-column:1/-1}}
+@media(max-width:600px){.container{padding:30px 15px}.brand{font-size:21px}.search{display:none}h1{font-size:30px}.heading{gap:12px}.appicon{width:54px;height:54px}.inputrow{flex-wrap:wrap}input[type=url]{flex-basis:100%}.inputrow button{flex:1}.statgrid{grid-template-columns:1fr}.sidebar{display:block}}
+</style>
+</head>
+<body>
+<header><div class="nav">
+<div class="brand"><i data-lucide="wrench"></i> Tool-web</div>
+<a href="#">Trang chủ</a><a class="active" href="#">Công cụ</a><a href="#">Danh mục</a><a href="#">Bài viết</a><a href="#">Yêu thích</a><a href="#">Giới thiệu</a><a href="#">Liên hệ</a>
+<input class="search" placeholder="Tìm kiếm công cụ..."><button class="iconbtn" id="themeBtn" title="Đổi giao diện"><i data-lucide="moon"></i></button>
+</div></header>
+<main class="container">
+<div class="breadcrumb">Trang chủ <span>/</span> Công cụ SEO <span>/</span> <b style="color:var(--text)">Phân tích liên kết nội bộ</b></div>
+<div class="cluster">Thuộc danh mục <span class="pill">Công cụ SEO</span> cụm công cụ</div>
+<div class="heading"><div class="appicon"><i data-lucide="globe" size="32"></i></div><div><h1>Phân tích liên kết nội bộ</h1><div class="subtitle">Phân tích cấu trúc liên kết nội bộ của một trang web</div></div><button class="heart" id="heart" title="Thêm vào yêu thích"><i data-lucide="heart"></i></button></div>
+<p class="intro">Công cụ giúp kiểm tra cấu trúc liên kết nội bộ trên website, thống kê liên kết và phân tích nội dung văn bản neo. Nhập địa chỉ trang web để bắt đầu quét các liên kết có thể truy cập.</p>
+<div class="stars">☆ ☆ ☆ ☆ ☆</div>
+<div class="notice"><strong>♧ Được bảo vệ bằng HTTPS　 |　 ⚗ Xử lý qua dịch vụ trung gian</strong><p>Để đọc nội dung trang web, địa chỉ URL sẽ được gửi đến dịch vụ đọc trang bên ngoài. Không nhập địa chỉ chứa thông tin riêng tư hoặc dữ liệu đăng nhập.</p></div>
+<div class="layout">
+<section>
+<div class="panel">
+<div class="inputrow"><input type="url" id="siteUrl" placeholder="https://example.com"><button class="primary" id="analyzeBtn" disabled>Phân tích</button><button class="secondary" id="resetBtn">Đặt lại</button></div>
+<div class="error" id="error"></div>
+<div class="result" id="result">
+<h2 style="margin-top:25px">Kết quả phân tích</h2>
+<div class="statgrid">
+<div class="stat"><b id="totalLinks">0</b><span>Tổng liên kết nội bộ</span></div>
+<div class="stat"><b id="uniqueLinks">0</b><span>Địa chỉ đích khác nhau</span></div>
+<div class="stat"><b id="emptyAnchors">0</b><span>Liên kết thiếu văn bản neo</span></div>
+</div>
+<h2>Danh sách liên kết nội bộ</h2>
+<div class="tablewrap"><table><thead><tr><th>STT</th><th>Văn bản neo</th><th>Địa chỉ đích</th><th>Loại liên kết</th></tr></thead><tbody id="linksBody"></tbody></table></div>
+<p class="smallnote" id="resultNote" style="margin-top:15px"></p>
+</div>
+</div>
+<div class="actions">Thao tác: <button class="share" id="shareBtn"><i data-lucide="share-2" style="width:16px;vertical-align:middle"></i> Chia sẻ</button></div>
+<div class="help"><h2>Cách sử dụng</h2><ol class="steps"><li><span class="num">1</span> Nhập địa chỉ website cần phân tích</li><li><span class="num">2</span> Nhấn nút “Phân tích” để quét liên kết nội bộ</li><li><span class="num">3</span> Xem danh sách liên kết và nội dung văn bản neo</li><li><span class="num">4</span> Kiểm tra các liên kết thiếu văn bản mô tả</li></ol></div>
+<div class="help"><h2>Tính năng</h2><ul class="steps"><li>✓　Thống kê số lượng liên kết nội bộ</li><li>✓　Phân tích văn bản neo của liên kết</li><li>✓　Phát hiện liên kết không có văn bản neo</li><li>✓　Phân biệt liên kết cùng trang và liên kết ngoài</li></ul></div>
+</section>
+<aside class="sidebar"><div class="sideheading">CÔNG CỤ LIÊN QUAN</div>
+<div class="sidecard"><div class="sideicon"><i data-lucide="globe"></i></div><h3>Phân tích thẻ Meta</h3><p>Phân tích và xem trước thẻ Meta của trang web</p></div>
+<div class="sidecard"><div class="sideicon"><i data-lucide="globe"></i></div><h3>Kiểm tra mật độ từ khóa</h3><p>Kiểm tra mật độ và phân bố từ khóa trong nội dung</p></div>
+<div class="sidecard"><div class="sideicon"><i data-lucide="globe"></i></div><h3>Xem trước kết quả tìm kiếm</h3><p>Xem trước giao diện trang trong kết quả tìm kiếm</p></div>
+<div class="sidecard"><div class="sideicon"><i data-lucide="shield-check"></i></div><h3>Kiểm tra chứng chỉ SSL</h3><p>Kiểm tra tính hợp lệ và thông tin chứng chỉ SSL</p></div>
+</aside>
+</div>
+</main>
+<footer>© 2026 Tool-web · Công cụ hỗ trợ phân tích website</footer>
+<script>
+const $=id=>document.getElementById(id);
+const urlInput=$('siteUrl'), analyzeBtn=$('analyzeBtn');
+function validUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)}catch{return false}}
+urlInput.addEventListener('input',()=>analyzeBtn.disabled=!validUrl(urlInput.value.trim()));
+$('resetBtn').addEventListener('click',()=>{urlInput.value='';analyzeBtn.disabled=true;$('result').style.display='none';$('error').style.display='none';});
+$('themeBtn').addEventListener('click',()=>{document.body.classList.toggle('dark');$('themeBtn').innerHTML=document.body.classList.contains('dark')?'<i data-lucide="sun"></i>':'<i data-lucide="moon"></i>';lucide.createIcons()});
+$('heart').addEventListener('click',e=>{e.currentTarget.style.color=e.currentTarget.style.color==='red'?'#94a3b8':'#ef4444'});
+$('shareBtn').addEventListener('click',async()=>{try{if(navigator.share)await navigator.share({title:document.title,url:location.href});else{await navigator.clipboard.writeText(location.href);alert('Đã sao chép địa chỉ trang!')}}catch{}});
+function normalizeUrl(raw,base){try{const u=new URL(raw,base);u.hash='';return u.href}catch{return null}}
+analyzeBtn.addEventListener('click',async()=>{
+ const target=urlInput.value.trim();if(!validUrl(target))return;
+ $('error').style.display='none';$('result').style.display='none';analyzeBtn.disabled=true;analyzeBtn.textContent='Đang phân tích...';
+ try{
+   // Dịch vụ đọc trang giúp lấy HTML từ website khác miền (trình duyệt thường chặn CORS).
+   const proxy='https://r.jina.ai/'+target;
+   const response=await fetch(proxy,{headers:{'Accept':'text/html'}});
+   if(!response.ok)throw new Error('Không thể đọc trang web. Vui lòng kiểm tra URL hoặc thử lại sau.');
+   const pageText=await response.text();
+   const parser=new DOMParser();
+   let doc=parser.parseFromString(pageText,'text/html');
+   // Jina có thể trả nội dung Markdown; thử lấy HTML gốc nếu phản hồi có cấu trúc HTML.
+   const anchors=[...doc.querySelectorAll('a[href]')];
+   const host=new URL(target).hostname.replace(/^www\./,'');
+   const links=anchors.map(a=>{
+     const href=normalizeUrl(a.getAttribute('href'),target);if(!href)return null;
+     const u=new URL(href),same=u.hostname.replace(/^www\./,'')===host;
+     if(!same)return null;
+     return {text:(a.innerText||a.textContent||a.getAttribute('aria-label')||'').trim().replace(/\s+/g,' ').slice(0,180),href,type:u.href===normalizeUrl(target,target)?'Liên kết về trang gốc':'Liên kết nội bộ'};
+   }).filter(Boolean);
+   const unique=new Set(links.map(x=>x.href));
+   $('totalLinks').textContent=links.length;
+   $('uniqueLinks').textContent=unique.size;
+   $('emptyAnchors').textContent=links.filter(x=>!x.text).length;
+   $('linksBody').innerHTML=links.length?links.map((x,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(x.text||'(Thiếu văn bản neo)')}</td><td><a href="${escapeHtml(x.href)}" target="_blank" rel="noopener">${escapeHtml(x.href)}</a></td><td><span class="status ${x.text?'':'warn'}">${x.type}</span></td></tr>`).join(''):'<tr><td colspan="4">Không tìm thấy liên kết nội bộ trong nội dung nhận được.</td></tr>';
+   $('resultNote').textContent=`Đã đọc nội dung trang ${target}. Kết quả phản ánh các liên kết xuất hiện trong nội dung mà dịch vụ trung gian trả về; các liên kết được tải bằng JavaScript hoặc yêu cầu đăng nhập có thể không xuất hiện.`;
+   $('result').style.display='block';
+ }catch(err){$('error').textContent=err.message||'Đã xảy ra lỗi khi phân tích. Vui lòng thử lại.';$('error').style.display='block'}
+ finally{analyzeBtn.disabled=!validUrl(urlInput.value.trim());analyzeBtn.textContent='Phân tích'}
+});
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+lucide.createIcons();
+</script>
+</body></html>
