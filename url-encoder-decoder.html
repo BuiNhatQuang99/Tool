@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bộ mã hóa và giải mã URL | Tool-web</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root{--blue:#2563eb;--line:#e2e8f0;--muted:#64748b;--bg:#f8fafc}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:#0f172a;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    .topbar{height:76px;background:rgba(255,255,255,.96);border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:20;backdrop-filter:blur(12px)}
+    .nav{max-width:1500px;height:100%;margin:auto;padding:0 24px;display:flex;align-items:center;gap:30px}
+    .brand{display:flex;align-items:center;gap:10px;color:var(--blue);font-size:25px;font-weight:750;text-decoration:none;white-space:nowrap}
+    .navlinks{display:flex;align-items:center;gap:8px}
+    .navlinks a{padding:12px 15px;border-radius:17px;color:#475569;text-decoration:none;font-weight:550}
+    .navlinks a.active,.navlinks a:hover{background:#eff6ff;color:var(--blue)}
+    .search{margin-left:auto;display:flex;align-items:center;gap:10px;background:#f1f3f6;border:1px solid #e2e8f0;border-radius:16px;padding:9px 14px;width:270px;color:#64748b}
+    .search input{border:0;outline:0;background:transparent;width:100%;font-size:15px}
+    .iconbtn{border:0;background:transparent;color:#64748b;padding:8px;cursor:pointer}
+    .container{max-width:1500px;margin:0 auto;padding:54px 24px 70px}
+    .crumb{color:#64748b;margin:0 0 40px;font-size:16px}.crumb strong{color:#0f172a;font-weight:600}
+    .cluster{font-size:14px;color:#64748b;margin-bottom:18px}
+    .pill{background:#eff6ff;color:var(--blue);padding:4px 12px;border-radius:20px;margin:0 7px}
+    .heading{display:flex;align-items:center;gap:20px;margin-bottom:22px}
+    .bigicon{width:68px;height:68px;border-radius:20px;background:#dbeafe;color:var(--blue);display:grid;place-items:center}
+    h1{font-size:42px;line-height:1.1;margin:0;font-weight:750;letter-spacing:-1px}
+    .subtitle{font-size:19px;color:#64748b;margin:7px 0 0}
+    .heart{border:0;background:#f1f3f6;color:#94a3b8;border-radius:17px;width:48px;height:48px;cursor:pointer}
+    .intro{color:#475569;line-height:1.65;margin:20px 0 6px}
+    .stars{display:flex;gap:9px;color:#cbd5e1;margin:8px 0 26px}
+    .review,.privacy{border:1px solid #edf0f4;border-radius:17px;padding:17px 20px;margin-bottom:18px;color:#64748b;background:rgba(255,255,255,.25)}
+    .privacyline{display:flex;align-items:center;gap:12px;font-size:14px;margin-bottom:10px}
+    .green{color:#00a650}.divider{color:#cbd5e1;margin:0 6px}
+    .privacy p{margin:0;color:#475569}
+    .layout{display:grid;grid-template-columns:minmax(0, 1fr) 335px;gap:38px;align-items:start;margin-top:28px}
+    .panel,.info-panel,.related-card{background:#fff;border:1px solid var(--line);border-radius:21px}
+    .panel{padding:30px}
+    .controls{display:flex;gap:34px;flex-wrap:wrap;margin-bottom:28px}
+    .control-group label.group-label{display:block;color:#475569;font-size:14px;margin-bottom:7px}
+    .segmented{display:flex;gap:9px;flex-wrap:wrap}
+    .seg{border:0;border-radius:16px;padding:10px 19px;background:#f1f3f5;color:#334155;font-size:16px;cursor:pointer}
+    .seg.selected{background:var(--blue);color:white;font-weight:650}
+    .fieldhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;color:#334155}
+    .counter{font-size:13px;color:#94a3b8;font-family:ui-monospace,monospace}
+    textarea{width:100%;min-height:190px;resize:vertical;border:2px solid #dbe3ee;border-radius:21px;background:#f8fafc;padding:18px;font:16px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;color:#334155;outline:none}
+    textarea:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #dbeafe}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}
+    .btn{border:0;border-radius:15px;padding:12px 20px;font-size:16px;cursor:pointer;background:#f1f3f5;color:#0f172a}
+    .btn.primary{background:var(--blue);color:white;font-weight:650}
+    .btn.softblue{background:#a9c9ff;color:white}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .result{border:1px dashed #cbd5e1;border-radius:20px;background:#f8fafc;min-height:84px;padding:22px;color:#64748b;white-space:pre-wrap;overflow-wrap:anywhere}
+    .result.empty{display:grid;place-items:center;color:#94a3b8}
+    .result code{font-family:ui-monospace,monospace;color:#334155}
+    .actions-share{display:flex;align-items:center;gap:16px;color:#64748b;margin:28px 0}
+    .share{border:1px solid var(--line);border-radius:15px;padding:11px 20px;background:white;color:#334155;cursor:pointer}
+    .side-title{font-size:16px;color:#64748b;font-weight:650;margin:3px 0 18px}
+    .related-card{padding:22px;margin-bottom:14px;display:block;color:inherit;text-decoration:none}
+    .small-icon{width:50px;height:50px;border-radius:15px;background:#dbeafe;color:var(--blue);display:grid;place-items:center;margin-bottom:16px}
+    .related-card strong{display:block;font-size:18px;font-weight:600;margin-bottom:8px}
+    .related-card p{margin:0;color:#64748b;line-height:1.5}
+    .related-card:hover{border-color:#93c5fd;box-shadow:0 5px 12px #0f172a12}
+    .info-panel{padding:30px;margin-top:28px}
+    .info-panel h2{font-size:24px;margin:0 0 20px}
+    .steps{display:grid;gap:16px;color:#475569}
+    .step{display:flex;align-items:center;gap:14px}
+    .num{width:29px;height:29px;border-radius:50%;background:#dbeafe;color:var(--blue);display:grid;place-items:center;font-size:14px;flex:none}
+    .footer-note{color:#94a3b8;font-size:13px;margin-top:30px}
+    body.dark{background:#0f172a;color:#e2e8f0}
+    body.dark .topbar,body.dark .panel,body.dark .info-panel,body.dark .related-card{background:#172033;border-color:#334155}
+    body.dark .navlinks a,body.dark .intro,body.dark .privacy p,body.dark .steps,body.dark .fieldhead{color:#cbd5e1}
+    body.dark .search,body.dark .seg:not(.selected),body.dark textarea,body.dark .result{background:#1e293b;color:#e2e8f0;border-color:#334155}
+    body.dark .review,body.dark .privacy{border-color:#334155}
+    body.dark .related-card p,body.dark .subtitle,body.dark .side-title{color:#94a3b8}
+    body.dark .share{background:#1e293b;color:#e2e8f0;border-color:#334155}
+    @media(max-width:900px){.nav{gap:12px}.navlinks{display:none}.search{width:min(260px,45vw)}.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.side-title{grid-column:1/-1}.related-card{margin:0}}
+    @media(max-width:560px){.container{padding:28px 15px}.nav{padding:0 15px}.brand{font-size:21px}.search{width:42vw}.heading{gap:12px}.bigicon{width:55px;height:55px}h1{font-size:29px}.subtitle{font-size:16px}.panel{padding:18px}.controls{gap:18px}.sidebar{grid-template-columns:1fr}.crumb{margin-bottom:28px}}
+  </style>
+</head>
+<body>
+<header class="topbar">
+  <nav class="nav">
+    <a class="brand" href="#"><i data-lucide="wrench" width="34" height="34"></i><span>Tool-web</span></a>
+    <div class="navlinks">
+      <a href="#">Trang chủ</a><a class="active" href="#">Công cụ</a><a href="#">Danh mục</a><a href="#">Bài viết</a><a href="#">Yêu thích</a><a href="#">Giới thiệu</a><a href="#">Liên hệ</a>
+    </div>
+    <label class="search"><i data-lucide="search" width="18"></i><input placeholder="Tìm kiếm công cụ..."></label>
+    <button class="iconbtn" id="themeBtn" title="Đổi giao diện"><i data-lucide="moon" width="23"></i></button>
+  </nav>
+</header>
+
+<main class="container">
+  <p class="crumb">Trang chủ&nbsp; / &nbsp;Công cụ SEO&nbsp; / &nbsp;<strong>Mã hóa/Giải mã URL</strong></p>
+  <div class="cluster">Thuộc danh mục <span class="pill">Công cụ SEO</span> cụm công cụ</div>
+  <section class="heading">
+    <div class="bigicon"><i data-lucide="globe" width="31" height="31"></i></div>
+    <div><h1>Mã hóa/Giải mã URL</h1><p class="subtitle">Mã hóa và giải mã chuỗi URL để sử dụng an toàn trên web</p></div>
+    <button class="heart" id="favoriteBtn" title="Thêm vào yêu thích"><i data-lucide="heart" width="23"></i></button>
+  </section>
+  <p class="intro">Công cụ Mã hóa/Giải mã URL hỗ trợ ba kiểu chuyển đổi: mã hóa thành phần URL, mã hóa toàn bộ URL và mã hóa hoặc giải mã thực thể HTML. Kết quả được cập nhật ngay khi bạn nhập, phù hợp để kiểm tra nhanh và làm sạch nội dung cần sao chép.</p>
+  <div class="stars" aria-label="Đánh giá"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+  <div class="review"><i data-lucide="calendar" width="15" style="vertical-align:-3px"></i>&nbsp; Nội dung được kiểm duyệt: 27 tháng 8, 2026</div>
+  <div class="privacy">
+    <div class="privacyline"><span class="green"><i data-lucide="shield-check" width="16" style="vertical-align:-3px"></i></span> Kết nối được mã hóa HTTPS <span class="divider">|</span><span class="green"><i data-lucide="flask-conical" width="16" style="vertical-align:-3px"></i></span> Xử lý ngay trên trình duyệt</div>
+    <p>Mọi thao tác đều được xử lý trực tiếp trên trình duyệt. Dữ liệu và văn bản của bạn không được gửi đến máy chủ Tool-web.</p>
+  </div>
+
+  <div class="layout">
+    <div>
+      <section class="panel">
+        <div class="controls">
+          <div class="control-group"><label class="group-label">Chế độ</label><div class="segmented" id="modeGroup"><button class="seg selected" data-value="encode">Mã hóa</button><button class="seg" data-value="decode">Giải mã</button></div></div>
+          <div class="control-group"><label class="group-label">Kiểu mã hóa</label><div class="segmented" id="typeGroup"><button class="seg selected" data-value="component">Thành phần</button><button class="seg" data-value="full">Toàn bộ URL</button><button class="seg" data-value="html">Thực thể HTML</button></div></div>
+        </div>
+        <div class="fieldhead"><label for="sourceText" id="inputLabel">Văn bản cần mã hóa</label><span class="counter" id="counter">0 ký tự · 0 byte</span></div>
+        <textarea id="sourceText" placeholder="https://example.com/path?q=hello world"></textarea>
+        <div class="actions">
+          <button class="btn" id="swapBtn" disabled><i data-lucide="repeat-2" width="16" style="vertical-align:-3px"></i>&nbsp; Đổi</button>
+          <button class="btn softblue" id="copyBtn" disabled><i data-lucide="copy" width="16" style="vertical-align:-3px"></i>&nbsp; Sao chép</button>
+          <button class="btn softblue" id="downloadBtn" disabled><i data-lucide="download" width="16" style="vertical-align:-3px"></i>&nbsp; Tải xuống</button>
+          <button class="btn" id="resetBtn">Đặt lại</button>
+        </div>
+        <div class="result empty" id="result">Nhập văn bản để mã hóa hoặc giải mã theo thời gian thực</div>
+      </section>
+
+      <div class="actions-share"><span>Thao tác:</span><button class="share" id="shareBtn"><i data-lucide="share-2" width="17" style="vertical-align:-3px"></i>&nbsp; Chia sẻ</button></div>
+      <section class="info-panel">
+        <h2>Cách sử dụng</h2>
+        <div class="steps">
+          <div class="step"><span class="num">1</span>Nhập văn bản hoặc đoạn URL cần chuyển đổi</div>
+          <div class="step"><span class="num">2</span>Chọn chế độ mã hóa hoặc giải mã</div>
+          <div class="step"><span class="num">3</span>Chọn kiểu thành phần, toàn bộ URL hoặc thực thể HTML</div>
+          <div class="step"><span class="num">4</span>Xem kết quả, sao chép hoặc tải xuống</div>
+        </div>
+      </section>
+      <p class="footer-note">Công cụ hoạt động trực tiếp trên thiết bị của bạn, không tải dữ liệu lên máy chủ.</p>
+    </div>
+
+    <aside class="sidebar">
+      <h3 class="side-title">CÔNG CỤ LIÊN QUAN</h3>
+      <a href="#" class="related-card"><div class="small-icon"><i data-lucide="globe"></i></div><strong>Phân tích thẻ Meta</strong><p>Phân tích và xem trước thẻ meta của trang web</p></a>
+      <a href="#" class="related-card"><div class="small-icon"><i data-lucide="globe"></i></div><strong>Kiểm tra mật độ từ khóa</strong><p>Kiểm tra mật độ và phân bố từ khóa trong nội dung</p></a>
+      <a href="#" class="related-card"><div class="small-icon"><i data-lucide="globe"></i></div><strong>Công cụ xem trước SERP</strong><p>Xem trước cách trang web hiển thị trong kết quả tìm kiếm</p></a>
+      <a href="#" class="related-card"><div class="small-icon"><i data-lucide="shield-check"></i></div><strong>Kiểm tra SSL</strong><p>Kiểm tra hiệu lực và thông tin chứng chỉ SSL</p></a>
+    </aside>
+  </div>
+</main>
+<div id="toast" style="position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:#172033;color:white;padding:12px 20px;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;z-index:50"></div>
+<script>
+  lucide.createIcons();
+  const input=document.getElementById('sourceText'), result=document.getElementById('result');
+  const counter=document.getElementById('counter'), copyBtn=document.getElementById('copyBtn'), downloadBtn=document.getElementById('downloadBtn'), swapBtn=document.getElementById('swapBtn');
+  let mode='encode', type='component', output='', toastTimer;
+  function notify(message){const t=document.getElementById('toast');t.textContent=message;t.style.opacity='1';clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.style.opacity='0',2200)}
+  function htmlEncode(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+  function htmlDecode(s){const el=document.createElement('textarea');el.innerHTML=s;return el.value}
+  function transform(s){
+    if(type==='html') return mode==='encode'?htmlEncode(s):htmlDecode(s);
+    if(mode==='encode') return type==='full'?encodeURI(s):encodeURIComponent(s);
+    try{return type==='full'?decodeURI(s):decodeURIComponent(s)}catch(e){throw new Error('Chuỗi không hợp lệ hoặc có ký tự mã hóa không đúng.')}
+  }
+  function update(){
+    const text=input.value;
+    counter.textContent=`${text.length} ký tự · ${new TextEncoder().encode(text).length} byte`;
+    document.getElementById('inputLabel').textContent=mode==='encode'?'Văn bản cần mã hóa':'Văn bản cần giải mã';
+    swapBtn.disabled=!text; 
+    if(!text.trim()){output='';result.className='result empty';result.textContent='Nhập văn bản để mã hóa hoặc giải mã theo thời gian thực';copyBtn.disabled=true;downloadBtn.disabled=true;return}
+    try{
+      output=transform(text);result.className='result';result.textContent=output;
+      copyBtn.disabled=false;downloadBtn.disabled=false;
+    }catch(err){output='';result.className='result';result.textContent=err.message;copyBtn.disabled=true;downloadBtn.disabled=true}
+  }
+  function selectGroup(id,value){document.querySelectorAll(`#${id} .seg`).forEach(b=>b.classList.toggle('selected',b.dataset.value===value))}
+  document.querySelectorAll('#modeGroup .seg').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.value;selectGroup('modeGroup',mode);update()}));
+  document.querySelectorAll('#typeGroup .seg').forEach(b=>b.addEventListener('click',()=>{type=b.dataset.value;selectGroup('typeGroup',type);update()}));
+  input.addEventListener('input',update);
+  copyBtn.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(output);notify('Đã sao chép kết quả!')}catch(e){notify('Không thể sao chép. Hãy chọn và sao chép thủ công.')}});
+  downloadBtn.addEventListener('click',()=>{const blob=new Blob([output],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='url-result.txt';a.click();URL.revokeObjectURL(url);notify('Đã tạo tệp kết quả!')});
+  swapBtn.addEventListener('click',()=>{if(!output)return;input.value=output;mode=mode==='encode'?'decode':'encode';selectGroup('modeGroup',mode);update()});
+  document.getElementById('resetBtn').addEventListener('click',()=>{input.value='';update();input.focus()});
+  document.getElementById('themeBtn').addEventListener('click',()=>{document.body.classList.toggle('dark');document.getElementById('themeBtn').innerHTML=document.body.classList.contains('dark')?'<i data-lucide="sun" width="23"></i>':'<i data-lucide="moon" width="23"></i>';lucide.createIcons()});
+  document.getElementById('favoriteBtn').addEventListener('click',e=>{e.currentTarget.classList.toggle('text-blue-600');notify(e.currentTarget.classList.contains('text-blue-600')?'Đã thêm vào yêu thích':'Đã bỏ khỏi yêu thích')});
+  document.getElementById('shareBtn').addEventListener('click',async()=>{try{if(navigator.share)await navigator.share({title:'Mã hóa/Giải mã URL',url:location.href});else{await navigator.clipboard.writeText(location.href);notify('Đã sao chép liên kết!')}}catch(e){}});
+  update();
+</script>
+</body>
+</html>
