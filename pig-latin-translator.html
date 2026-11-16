@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pig Latin Translator - Tool-web</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root{--blue:#2864ed;--ink:#101827;--muted:#64748b;--line:#e2e8f0;--page:#f8fafc}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    .site-header{height:76px;background:rgba(255,255,255,.96);border-bottom:1px solid #e8edf3;position:sticky;top:0;z-index:20}
+    .nav-wrap{max-width:1500px;height:100%;margin:auto;padding:0 24px;display:flex;align-items:center;gap:34px}
+    .brand{display:flex;align-items:center;gap:12px;color:var(--blue);font-size:25px;font-weight:750;text-decoration:none;white-space:nowrap}
+    .nav-links{display:flex;align-items:center;gap:8px}
+    .nav-links a{padding:12px 15px;border-radius:16px;color:#475569;text-decoration:none;font-weight:550}
+    .nav-links a.active{background:#eff6ff;color:var(--blue)}
+    .nav-tools{margin-left:auto;display:flex;align-items:center;gap:18px}
+    .search{height:42px;width:270px;border:1px solid #e2e8f0;background:#f3f4f6;border-radius:16px;padding:0 14px;display:flex;align-items:center;gap:10px;color:#94a3b8}
+    .search input{border:0;outline:0;background:transparent;width:100%;font:inherit;color:#334155}
+    .icon-btn{border:0;background:transparent;color:#64748b;cursor:pointer;padding:7px}
+    .container{max-width:1500px;margin:0 auto;padding:54px 24px 70px}
+    .crumb{color:#64748b;margin-bottom:40px;font-size:16px}.crumb strong{color:#0f172a;font-weight:600}
+    .cluster{font-size:14px;color:#64748b;margin-bottom:22px;display:flex;align-items:center;gap:9px}
+    .pill{background:#eff6ff;color:var(--blue);padding:5px 12px;border-radius:20px}
+    .heading-row{display:flex;align-items:center;gap:18px;margin-bottom:20px}
+    .main-icon{width:70px;height:70px;border-radius:22px;background:#dbeafe;color:var(--blue);display:grid;place-items:center;flex-shrink:0}
+    h1{font-size:44px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-1px}
+    .subtitle{font-size:19px;color:#64748b;margin-top:7px}
+    .heart{border:0;background:#f1f5f9;color:#94a3b8;width:48px;height:48px;border-radius:17px;cursor:pointer}
+    .heart.saved{color:#ef476f}
+    .description{font-size:16px;line-height:1.7;color:#334155;margin:18px 0 8px}
+    .stars{display:flex;gap:8px;margin:8px 0 26px}
+    .star{font-size:29px;color:#cbd5e1;cursor:pointer;line-height:1}.star.selected{color:#f5b82e}
+    .notice{border:1px solid #edf0f4;border-radius:17px;padding:16px 20px;margin:16px 0;color:#64748b}
+    .notice-top{display:flex;align-items:center;gap:14px;font-size:14px;margin-bottom:10px;flex-wrap:wrap}
+    .green{color:#00a650}.notice p{margin:0;color:#475569}
+    .layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:38px;margin-top:30px;align-items:start}
+    .panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px;margin-bottom:28px}
+    .mode-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+    .mode-btn,.action-btn{border:1px solid #e2e8f0;border-radius:15px;padding:12px 20px;background:#fff;color:#1e293b;font-size:16px;cursor:pointer}
+    .mode-btn.active,.primary{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:650}
+    label{display:block;font-weight:600;margin-bottom:8px;color:#263449}
+    textarea{width:100%;min-height:140px;resize:vertical;border:1px solid #e2e8f0;border-radius:20px;padding:20px;font:inherit;font-size:16px;line-height:1.6;outline:none;background:#f9fafb;color:#1e293b}
+    textarea:focus{border:2px solid #3980ff;box-shadow:0 0 0 3px #dbeafe;background:#fff}
+    .field{margin-bottom:20px}
+    .buttons{display:flex;gap:12px;flex-wrap:wrap}
+    .action-btn{min-width:112px}
+    .action-btn.primary{box-shadow:0 2px 4px #00000018}
+    .result-wrap{margin-top:22px}
+    .result-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px;gap:12px}
+    .result-head label{margin:0}
+    .small-btn{border:1px solid #e2e8f0;background:#fff;border-radius:11px;padding:8px 13px;cursor:pointer;color:#334155}
+    .result-box{white-space:pre-wrap;overflow-wrap:anywhere;min-height:120px;border:1px solid #dce3ed;background:#f8fafc;border-radius:16px;padding:18px;color:#334155;line-height:1.65}
+    .empty{color:#94a3b8}
+    .actions-line{display:flex;align-items:center;gap:14px;color:#64748b;margin:0 0 28px}
+    .info-title{font-size:23px;font-weight:750;margin:0 0 22px}
+    .steps{display:grid;gap:17px;color:#475569}
+    .step{display:flex;align-items:center;gap:15px}
+    .num{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:#dbeafe;color:var(--blue);font-weight:650;flex-shrink:0}
+    .features{display:grid;gap:13px;color:#475569}
+    .feature{display:flex;align-items:center;gap:12px}
+    .check{color:#00b85a;font-size:20px;font-weight:700}
+    .side-title{font-size:16px;color:#64748b;font-weight:700;letter-spacing:.3px;margin:2px 0 18px}
+    .related{display:block;background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;margin-bottom:16px;text-decoration:none;color:inherit}
+    .related-icon{width:50px;height:50px;border-radius:15px;background:#dbeafe;color:var(--blue);display:grid;place-items:center;margin-bottom:16px}
+    .related strong{display:block;font-size:18px;margin-bottom:8px;font-weight:600}
+    .related span{color:#64748b;line-height:1.5}
+    .article{background:#fff;border:1px solid var(--line);border-radius:20px;padding:24px;margin-top:28px}
+    .article h3{margin:0 0 16px;font-size:17px}
+    .article a{color:#0f172a;text-decoration:none;font-weight:600}
+    footer{text-align:center;color:#94a3b8;padding:24px;border-top:1px solid #e8edf3}
+    .toast{position:fixed;right:24px;bottom:24px;background:#172033;color:white;padding:13px 18px;border-radius:12px;box-shadow:0 8px 30px #0002;opacity:0;transform:translateY(10px);transition:.2s;pointer-events:none;z-index:50}
+    .toast.show{opacity:1;transform:translateY(0)}
+    body.dark{--page:#0f172a;--ink:#e5e7eb;--line:#334155;background:var(--page);color:var(--ink)}
+    body.dark .site-header,body.dark .panel,body.dark .related,body.dark .article{background:#172033;border-color:#334155}
+    body.dark .nav-links a,body.dark .description,body.dark .notice p,body.dark .steps,body.dark .features,body.dark label,body.dark .info-title{color:#dbe4f0}
+    body.dark .nav-links a.active,body.dark .main-icon,body.dark .related-icon{background:#1e3a8a;color:#bfdbfe}
+    body.dark .notice,body.dark .search,body.dark textarea,body.dark .result-box{background:#111c30;border-color:#334155;color:#e2e8f0}
+    body.dark .mode-btn,body.dark .action-btn,body.dark .small-btn{background:#1e293b;color:#e2e8f0;border-color:#475569}
+    body.dark .mode-btn.active,body.dark .action-btn.primary{background:var(--blue);color:#fff}
+    body.dark .related strong,body.dark .article a{color:#f8fafc}
+    @media(max-width:1000px){.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.side-title{grid-column:1/-1}.related{margin:0}}
+    @media(max-width:760px){.nav-wrap{padding:0 16px;gap:12px}.nav-links{display:none}.brand{font-size:21px}.search{width:min(42vw,220px)}.container{padding:30px 16px}.crumb{margin-bottom:28px}h1{font-size:32px}.main-icon{width:58px;height:58px}.panel{padding:20px}.sidebar{grid-template-columns:1fr}.description{font-size:15px}}
+  </style>
+</head>
+<body>
+<header class="site-header">
+  <div class="nav-wrap">
+    <a class="brand" href="#"><i data-lucide="wrench" size="34"></i><span>Tool-web</span></a>
+    <nav class="nav-links">
+      <a href="#">Trang chủ</a><a class="active" href="#">Công cụ</a><a href="#">Danh mục</a><a href="#">Bài viết</a><a href="#">Yêu thích</a><a href="#">Giới thiệu</a><a href="#">Liên hệ</a>
+    </nav>
+    <div class="nav-tools">
+      <div class="search"><i data-lucide="search" size="19"></i><input type="search" placeholder="Tìm kiếm công cụ..."></div>
+      <button class="icon-btn" id="themeToggle" aria-label="Đổi giao diện"><i data-lucide="moon" size="23"></i></button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <div class="crumb">Trang chủ&nbsp; / &nbsp;Công cụ văn bản&nbsp; / &nbsp;<strong>Dịch Pig Latin</strong></div>
+  <div class="cluster">Thuộc danh mục <span class="pill">Công cụ văn bản</span> cụm công cụ</div>
+
+  <section>
+    <div class="heading-row">
+      <div class="main-icon"><i data-lucide="align-left" size="34"></i></div>
+      <div>
+        <h1>Dịch Pig Latin</h1>
+        <div class="subtitle">Chuyển đổi văn bản tiếng Anh sang Pig Latin và ngược lại</div>
+      </div>
+      <button class="heart" id="favoriteBtn" title="Thêm vào yêu thích"><i data-lucide="heart" size="23"></i></button>
+    </div>
+    <p class="description">Công cụ giúp chuyển đổi văn bản tiếng Anh sang Pig Latin và dịch ngược lại. Hỗ trợ chuyển đổi nhanh hai chiều, giữ nguyên dấu câu và chữ hoa chữ thường. Mọi thao tác được thực hiện trực tiếp trên trình duyệt, văn bản của bạn không được gửi lên máy chủ Tool-web.</p>
+    <div class="stars" aria-label="Đánh giá">
+      <span class="star" data-rating="1">☆</span><span class="star" data-rating="2">☆</span><span class="star" data-rating="3">☆</span><span class="star" data-rating="4">☆</span><span class="star" data-rating="5">☆</span>
+    </div>
+  </section>
+
+  <div class="notice">
+    <div class="notice-top"><span class="green">♧</span> Được mã hóa bằng HTTPS <span>|</span><span class="green">♧</span> Xử lý trực tiếp trên trình duyệt</div>
+    <p>Toàn bộ quá trình chuyển đổi diễn ra trên trình duyệt. Văn bản của bạn không được gửi đến máy chủ Tool-web.</p>
+  </div>
+
+  <div class="layout">
+    <div class="main-column">
+      <section class="panel">
+        <div class="mode-row">
+          <button class="mode-btn active" id="toPig">Tiếng Anh → Pig Latin</button>
+          <button class="mode-btn" id="toEnglish">Pig Latin → Tiếng Anh</button>
+        </div>
+        <div class="field">
+          <label for="sourceText" id="sourceLabel">Nhập văn bản tiếng Anh</label>
+          <textarea id="sourceText" placeholder="Nhập văn bản tiếng Anh để chuyển sang Pig Latin..."></textarea>
+        </div>
+        <div class="buttons">
+          <button class="action-btn primary" id="translateBtn">Dịch văn bản</button>
+          <button class="action-btn" id="clearBtn">Xóa nội dung</button>
+        </div>
+        <div class="result-wrap">
+          <div class="result-head">
+            <label for="resultText">Kết quả</label>
+            <button class="small-btn" id="copyBtn"><i data-lucide="copy" size="15" style="vertical-align:middle"></i> Sao chép</button>
+          </div>
+          <div class="result-box empty" id="resultText">Kết quả chuyển đổi sẽ hiển thị tại đây...</div>
+        </div>
+      </section>
+
+      <div class="actions-line">Thao tác: <button class="action-btn" id="shareBtn"><i data-lucide="share-2" size="17" style="vertical-align:middle"></i> Chia sẻ</button></div>
+
+      <section class="panel">
+        <h2 class="info-title">Cách sử dụng</h2>
+        <div class="steps">
+          <div class="step"><span class="num">1</span> Nhập văn bản tiếng Anh cần chuyển đổi</div>
+          <div class="step"><span class="num">2</span> Hoặc chọn chế độ dịch Pig Latin về tiếng Anh</div>
+          <div class="step"><span class="num">3</span> Nhấn nút dịch để xem kết quả ngay lập tức</div>
+          <div class="step"><span class="num">4</span> Sao chép kết quả để sử dụng</div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="info-title">Tính năng</h2>
+        <div class="features">
+          <div class="feature"><span class="check">✓</span> Dịch tiếng Anh sang Pig Latin</div>
+          <div class="feature"><span class="check">✓</span> Dịch Pig Latin ngược về tiếng Anh</div>
+          <div class="feature"><span class="check">✓</span> Giữ nguyên dấu câu</div>
+          <div class="feature"><span class="check">✓</span> Bảo toàn kiểu viết hoa và viết thường</div>
+          <div class="feature"><span class="check">✓</span> Xử lý trực tiếp trên trình duyệt</div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="sidebar">
+      <h2 class="side-title">CÔNG CỤ LIÊN QUAN</h2>
+      <a class="related" href="#"><div class="related-icon"><i data-lucide="align-left"></i></div><strong>Đếm từ</strong><span>Đếm số từ, ký tự, câu và đoạn văn trong nội dung</span></a>
+      <a class="related" href="#"><div class="related-icon"><i data-lucide="file-diff"></i></div><strong>So sánh văn bản</strong><span>So sánh hai đoạn văn bản và làm nổi bật điểm khác nhau</span></a>
+      <a class="related" href="#"><div class="related-icon"><i data-lucide="code"></i></div><strong>Mã hóa HTML</strong><span>Mã hóa hoặc giải mã các ký tự HTML trong văn bản</span></a>
+      <a class="related" href="#"><div class="related-icon"><i data-lucide="case-sensitive"></i></div><strong>Chuyển đổi kiểu chữ</strong><span>Chuyển văn bản thành chữ hoa, chữ thường hoặc kiểu tiêu đề</span></a>
+      <div class="article"><h3>BÀI VIẾT LIÊN QUAN</h3><a href="#">15 công cụ SEO cần thiết cho mọi website</a></div>
+    </aside>
+  </div>
+</main>
+<footer>© 2026 Tool-web. Công cụ trực tuyến miễn phí.</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+  lucide.createIcons();
+  const source = document.getElementById('sourceText');
+  const result = document.getElementById('resultText');
+  const sourceLabel = document.getElementById('sourceLabel');
+  const toPig = document.getElementById('toPig');
+  const toEnglish = document.getElementById('toEnglish');
+  let direction = 'pig';
+
+  function preserveCase(original, converted) {
+    if (original.toUpperCase() === original && /[A-Z]/.test(original)) return converted.toUpperCase();
+    if (original[0] && original[0] === original[0].toUpperCase() && original[0] !== original[0].toLowerCase())
+      return converted.charAt(0).toUpperCase() + converted.slice(1);
+    return converted.toLowerCase();
+  }
+
+  function encodeWord(word) {
+    const match = word.match(/^([^A-Za-z]*)([A-Za-z]+)([^A-Za-z]*)$/);
+    if (!match) return word;
+    const [, prefix, letters, suffix] = match;
+    const lower = letters.toLowerCase();
+    let converted;
+    if (/^[aeiou]/.test(lower)) converted = lower + 'way';
+    else {
+      const cluster = lower.match(/^(qu|[^aeiou]+(?=y)|[^aeiou]+)/);
+      const count = cluster ? cluster[0].length : 0;
+      converted = lower.slice(count) + lower.slice(0, count) + 'ay';
+    }
+    return prefix + preserveCase(letters, converted) + suffix;
+  }
+
+  function decodeWord(word) {
+    const match = word.match(/^([^A-Za-z]*)([A-Za-z]+)([^A-Za-z]*)$/);
+    if (!match) return word;
+    const [, prefix, letters, suffix] = match;
+    const lower = letters.toLowerCase();
+    let converted = lower;
+    if (lower.endsWith('way')) converted = lower.slice(0, -3);
+    else if (lower.endsWith('ay')) {
+      const stem = lower.slice(0, -2);
+      // Đưa cụm phụ âm cuối về đầu từ; ưu tiên cụm phụ âm dài nhất hợp lý.
+      const candidates = [];
+      for (let i = 1; i <= Math.min(4, stem.length); i++) {
+        const tail = stem.slice(-i);
+        if (/^[^aeiou]+$/.test(tail)) candidates.push(i);
+      }
+      const n = candidates.length ? Math.max(...candidates) : 0;
+      converted = n ? stem.slice(-n) + stem.slice(0, -n) : stem;
+    }
+    return prefix + preserveCase(letters, converted) + suffix;
+  }
+
+  function translate() {
+    const value = source.value;
+    if (!value.trim()) {
+      result.textContent = 'Vui lòng nhập văn bản trước khi dịch.';
+      result.classList.add('empty');
+      return;
+    }
+    const fn = direction === 'pig' ? encodeWord : decodeWord;
+    result.textContent = value.replace(/\S+/g, token => fn(token));
+    result.classList.remove('empty');
+  }
+
+  function setDirection(next) {
+    direction = next;
+    toPig.classList.toggle('active', next === 'pig');
+    toEnglish.classList.toggle('active', next === 'english');
+    sourceLabel.textContent = next === 'pig' ? 'Nhập văn bản tiếng Anh' : 'Nhập văn bản Pig Latin';
+    source.placeholder = next === 'pig'
+      ? 'Nhập văn bản tiếng Anh để chuyển sang Pig Latin...'
+      : 'Nhập văn bản Pig Latin để dịch về tiếng Anh...';
+    result.textContent = 'Kết quả chuyển đổi sẽ hiển thị tại đây...';
+    result.classList.add('empty');
+  }
+  toPig.addEventListener('click', () => setDirection('pig'));
+  toEnglish.addEventListener('click', () => setDirection('english'));
+  document.getElementById('translateBtn').addEventListener('click', translate);
+  source.addEventListener('input', () => { if (source.value.trim()) translate(); else { result.textContent = 'Kết quả chuyển đổi sẽ hiển thị tại đây...'; result.classList.add('empty'); } });
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    source.value = ''; result.textContent = 'Kết quả chuyển đổi sẽ hiển thị tại đây...'; result.classList.add('empty'); source.focus();
+  });
+  function toast(message) {
+    const el = document.getElementById('toast'); el.textContent = message; el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2200);
+  }
+  document.getElementById('copyBtn').addEventListener('click', async () => {
+    if (result.classList.contains('empty')) return toast('Chưa có kết quả để sao chép.');
+    try { await navigator.clipboard.writeText(result.textContent); toast('Đã sao chép kết quả.'); }
+    catch { toast('Trình duyệt không cho phép sao chép tự động.'); }
+  });
+  document.getElementById('shareBtn').addEventListener('click', async () => {
+    try {
+      if (navigator.share) await navigator.share({title:'Dịch Pig Latin - Tool-web', text:'Công cụ dịch Pig Latin trực tuyến', url:location.href});
+      else { await navigator.clipboard.writeText(location.href); toast('Đã sao chép liên kết trang.'); }
+    } catch(e) {}
+  });
+  document.getElementById('favoriteBtn').addEventListener('click', e => {
+    e.currentTarget.classList.toggle('saved');
+    e.currentTarget.innerHTML = e.currentTarget.classList.contains('saved') ? '<i data-lucide="heart" fill="currentColor"></i>' : '<i data-lucide="heart"></i>';
+    lucide.createIcons(); toast(e.currentTarget.classList.contains('saved') ? 'Đã thêm vào danh sách yêu thích.' : 'Đã bỏ khỏi danh sách yêu thích.');
+  });
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+    document.getElementById('themeToggle').innerHTML = document.body.classList.contains('dark') ? '<i data-lucide="sun"></i>' : '<i data-lucide="moon"></i>';
+    lucide.createIcons();
+  });
+  document.querySelectorAll('.star').forEach(star => star.addEventListener('click', () => {
+    const rating = Number(star.dataset.rating);
+    document.querySelectorAll('.star').forEach(s => {
+      const active = Number(s.dataset.rating) <= rating;
+      s.classList.toggle('selected', active); s.textContent = active ? '★' : '☆';
+    });
+    toast('Cảm ơn bạn đã đánh giá ' + rating + '/5 sao.');
+  }));
+</script>
+</body>
+</html>
