@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trích xuất văn bản AI - Tool-web</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<style>
+:root{--blue:#2563eb;--ink:#101828;--muted:#64748b;--line:#e2e8f0;--surface:#fff;--bg:#f7f9fc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.topbar{height:74px;background:rgba(255,255,255,.94);border-bottom:1px solid #e8edf4;position:sticky;top:0;z-index:20;backdrop-filter:blur(14px)}
+.navwrap{max-width:1500px;height:100%;margin:auto;padding:0 28px;display:flex;align-items:center;gap:36px}
+.brand{font-size:25px;font-weight:800;color:var(--blue);display:flex;align-items:center;gap:10px;white-space:nowrap}
+.navlinks{display:flex;align-items:center;gap:8px}.navlinks a{padding:12px 15px;border-radius:15px;text-decoration:none;color:#475569;font-weight:600}.navlinks a.active,.navlinks a:hover{background:#eff6ff;color:var(--blue)}
+.search{margin-left:auto;position:relative}.search input{width:260px;border:1px solid var(--line);border-radius:18px;background:#f1f3f7;padding:11px 15px 11px 42px;outline:none}.search svg{position:absolute;left:14px;top:12px;color:#64748b}
+.iconbtn{border:0;background:transparent;color:#64748b;padding:8px;cursor:pointer}
+.container{max-width:1500px;margin:0 auto;padding:54px 28px 80px}.crumb{color:#64748b;margin-bottom:38px}.crumb b{color:#0f172a;font-weight:600}
+.heading{display:flex;align-items:center;gap:18px;margin-bottom:12px}.heroicon{width:68px;height:68px;border-radius:22px;background:#dbeafe;color:var(--blue);display:grid;place-items:center}.heading h1{font-size:42px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-1px}.subtitle{font-size:18px;color:#64748b;margin-top:7px}
+.description{font-size:16px;line-height:1.7;color:#475569;margin:22px 0 8px}.stars{display:flex;gap:12px;color:#cbd5e1;margin-bottom:24px}.stars svg{width:27px;height:27px}
+.notice{border:1px solid #edf0f5;border-radius:17px;padding:16px 20px;margin:14px 0 28px;color:#64748b;background:rgba(255,255,255,.35)}.notice .meta{display:flex;gap:20px;align-items:center;flex-wrap:wrap;font-size:14px}.notice .meta span{display:flex;align-items:center;gap:8px}.notice .meta svg{width:17px;height:17px;color:#16a34a}.notice p{margin:8px 0 0;color:#475569}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:38px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 8px 28px rgba(15,23,42,.025)}
+.mode-label,.field-label{display:block;color:#334155;font-size:14px;font-weight:600;margin-bottom:10px}
+.mode-switch{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:26px}.mode-btn{border:1px solid var(--line);background:white;border-radius:17px;padding:15px;font-weight:650;color:#334155;cursor:pointer;transition:.2s}.mode-btn.active{background:#eff6ff;border-color:#93c5fd;color:#1d4ed8;box-shadow:0 0 0 3px rgba(59,130,246,.06)}
+.upload{border:2px dashed #cbd5e1;border-radius:20px;background:#f8fafc;padding:36px 20px;text-align:center;cursor:pointer;transition:.2s}.upload:hover,.upload.drag{border-color:#60a5fa;background:#eff6ff}.upload .cloud{width:46px;height:46px;color:#94a3b8;margin:0 auto 12px}.upload h3{font-size:17px;margin:0 0 7px}.upload p{margin:0;color:#64748b}.upload strong{color:var(--blue)}
+.preview{display:none;margin-top:18px;padding:14px;border:1px solid var(--line);border-radius:16px;align-items:center;gap:14px}.preview img{width:72px;height:72px;object-fit:cover;border-radius:10px}.preview .fileinfo{flex:1;min-width:0}.preview .fileinfo b{display:block;overflow-wrap:anywhere}.preview small{color:#64748b}
+textarea{width:100%;min-height:210px;border:1px solid var(--line);border-radius:17px;background:#f8fafc;padding:17px 18px;resize:vertical;outline:none;color:#1e293b;line-height:1.65}textarea:focus,select:focus{border-color:#93c5fd;box-shadow:0 0 0 3px #dbeafe}
+select{border:1px solid var(--line);border-radius:13px;padding:11px 14px;background:#f8fafc;color:#1e293b;outline:none}
+.fieldrow{display:flex;align-items:center;gap:15px;flex-wrap:wrap;margin:20px 0}.fieldrow select{min-width:190px}
+.btn{border:0;border-radius:14px;background:var(--blue);color:#fff;padding:13px 22px;font-weight:700;cursor:pointer;box-shadow:0 3px 8px #2563eb25;transition:.2s}.btn:hover{background:#1d4ed8;transform:translateY(-1px)}.btn:disabled{opacity:.55;cursor:not-allowed;transform:none}.btn.secondary{background:white;color:#334155;border:1px solid var(--line);box-shadow:none}.btn.secondary:hover{background:#f8fafc}
+.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:18px}.progress{height:8px;border-radius:20px;background:#e2e8f0;overflow:hidden;margin-top:18px;display:none}.progress div{height:100%;width:0;background:linear-gradient(90deg,#60a5fa,#2563eb);transition:width .2s}
+.status{font-size:14px;color:#64748b;margin-top:10px;min-height:20px}
+.resultbox{margin-top:22px;border:1px solid #bfdbfe;background:#eff6ff;border-radius:19px;padding:20px;display:none}.resulthead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.resulthead h3{margin:0;font-size:17px}.resultbox textarea{background:white;min-height:230px}
+.info-card{background:#eff6ff;border:1px solid #bfdbfe;border-radius:18px;padding:25px;text-align:center;margin-top:22px;color:#64748b}.info-card svg{color:#60a5fa;width:34px;height:34px;margin:0 auto 10px}.info-card b{display:block;color:#0f172a;margin-bottom:6px}
+.side-title{font-size:16px;color:#64748b;font-weight:650;margin:2px 0 18px}.related{display:flex;flex-direction:column;gap:14px}.related-card{background:white;border:1px solid var(--line);border-radius:20px;padding:22px;text-decoration:none;color:inherit;transition:.2s}.related-card:hover{border-color:#93c5fd;box-shadow:0 8px 20px #0f172a0b;transform:translateY(-2px)}.miniicon{width:48px;height:48px;border-radius:15px;background:#dbeafe;color:var(--blue);display:grid;place-items:center;margin-bottom:16px}.related-card b{display:block;font-size:17px;margin-bottom:7px}.related-card p{margin:0;color:#64748b;line-height:1.5}
+.content-card{margin-top:28px}.content-card h2{font-size:23px;margin:0 0 18px}.steps,.features{display:grid;gap:14px}.step,.feature{display:flex;align-items:center;gap:14px;color:#475569}.num{width:29px;height:29px;flex:none;border-radius:50%;background:#dbeafe;color:#2563eb;display:grid;place-items:center;font-size:14px;font-weight:700}.check{color:#16a34a;font-size:20px}
+footer{text-align:center;color:#94a3b8;padding:25px;border-top:1px solid #e8edf4}
+body.dark{--bg:#0b1220;--surface:#111c2e;--ink:#e5edf8;--line:#263449;color:var(--ink)}body.dark .topbar{background:#101a2b;border-color:#263449}body.dark .navlinks a{color:#cbd5e1}body.dark .navlinks a.active{background:#1e3a5f;color:#93c5fd}body.dark .crumb b,body.dark .heading h1,body.dark .related-card b,body.dark .content-card h2,body.dark .info-card b{color:#f1f5f9}body.dark .description,body.dark .subtitle,body.dark .step,body.dark .feature,body.dark .notice p{color:#b7c4d8}body.dark .notice,body.dark .related-card,body.dark .panel{background:#111c2e;border-color:#263449}body.dark .upload,body.dark textarea,body.dark select,body.dark .search input{background:#0b1525;color:#e2e8f0;border-color:#334155}body.dark .mode-btn{background:#0b1525;color:#cbd5e1;border-color:#334155}body.dark .mode-btn.active{background:#172d4a;border-color:#3b82f6;color:#93c5fd}body.dark .resultbox,body.dark .info-card{background:#132844;border-color:#28558b}body.dark .resultbox textarea{background:#0b1525}
+@media(max-width:950px){.layout{grid-template-columns:1fr}.sidebar{display:none}.navwrap{gap:12px}.navlinks{display:none}.search input{width:190px}.container{padding:35px 18px 60px}}
+@media(max-width:560px){.topbar{height:65px}.navwrap{padding:0 15px}.brand{font-size:21px}.search input{width:145px}.container{padding:28px 14px 50px}.heading h1{font-size:32px}.heroicon{width:56px;height:56px}.panel{padding:18px}.mode-switch{grid-template-columns:1fr}.fieldrow{align-items:flex-start}.fieldrow select{width:100%}.actions .btn{flex:1}}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="navwrap">
+  <a class="brand" href="#" aria-label="Tool-web"><i data-lucide="wrench" width="32"></i>Tool-web</a>
+  <nav class="navlinks"><a href="#">Trang chủ</a><a class="active" href="#">Công cụ</a><a href="#">Danh mục</a><a href="#">Bài viết</a><a href="#">Yêu thích</a><a href="#">Giới thiệu</a><a href="#">Liên hệ</a></nav>
+  <div class="search"><i data-lucide="search" width="18"></i><input placeholder="Tìm kiếm công cụ..."></div>
+  <button class="iconbtn" id="themeBtn" title="Đổi giao diện"><i data-lucide="moon"></i></button>
+ </div>
+</header>
+<main class="container">
+ <div class="crumb">Trang chủ&nbsp; / &nbsp;Công cụ AI&nbsp; / &nbsp;<b>Nhận diện văn bản AI</b></div>
+ <section>
+  <div class="heading"><div class="heroicon"><i data-lucide="image" width="34"></i></div><div><h1>Nhận diện văn bản AI</h1><div class="subtitle">Trích xuất và sắp xếp văn bản từ hình ảnh bằng công nghệ OCR</div></div><button class="iconbtn" title="Thêm vào yêu thích"><i data-lucide="heart"></i></button></div>
+  <p class="description">Chuyển chữ trong hình ảnh thành văn bản có thể chỉnh sửa. Công cụ hỗ trợ tiếng Việt và nhiều ngôn ngữ khác, cho phép trích xuất nội dung thuần hoặc trình bày lại theo cấu trúc rõ ràng. Quá trình nhận diện được thực hiện ngay trên trình duyệt của bạn.</p>
+  <div class="stars" aria-label="Đánh giá"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+ </section>
+ <div class="notice"><div class="meta"><span><i data-lucide="shield-check"></i> Kết nối an toàn</span><span>│</span><span><i data-lucide="flask-conical"></i> Xử lý ngay trên trình duyệt</span><span>│</span><span><i data-lucide="flame" style="color:#f97316"></i> Miễn phí sử dụng</span></div><p>Hình ảnh của bạn được xử lý trực tiếp trên thiết bị. Công cụ không tải hình ảnh lên máy chủ của Tool-web.</p></div>
+ <div class="layout">
+  <div>
+   <section class="panel">
+    <label class="mode-label">Chế độ xử lý</label>
+    <div class="mode-switch"><button class="mode-btn active" data-mode="plain">Trích xuất văn bản</button><button class="mode-btn" data-mode="structured">Trình bày có cấu trúc</button></div>
+    <label class="field-label" for="imageInput">Chọn hình ảnh cần nhận diện</label>
+    <input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp,image/bmp,image/tiff" hidden>
+    <div class="upload" id="dropzone" tabindex="0" role="button" aria-label="Chọn hoặc thả hình ảnh">
+     <i data-lucide="cloud-upload" class="cloud"></i><h3>Kéo và thả hình ảnh vào đây</h3><p>hoặc <strong>chọn hình ảnh từ thiết bị</strong></p><p style="font-size:13px;margin-top:9px">Hỗ trợ PNG, JPG, WEBP, BMP · Tối đa 15 MB</p>
+    </div>
+    <div class="preview" id="preview"><img id="previewImg" alt="Ảnh đã chọn"><div class="fileinfo"><b id="fileName"></b><small id="fileSize"></small></div><button class="iconbtn" id="removeImage" title="Xóa ảnh"><i data-lucide="x"></i></button></div>
+    <div class="fieldrow"><div><label class="field-label" for="language">Ngôn ngữ trong ảnh</label><select id="language"><option value="vie+eng">Tiếng Việt và tiếng Anh</option><option value="vie">Tiếng Việt</option><option value="eng">Tiếng Anh</option><option value="fra">Tiếng Pháp</option><option value="deu">Tiếng Đức</option><option value="spa">Tiếng Tây Ban Nha</option><option value="jpn">Tiếng Nhật</option><option value="chi_sim">Tiếng Trung giản thể</option><option value="kor">Tiếng Hàn</option></select></div></div>
+    <div class="actions"><button class="btn" id="extractBtn" disabled><i data-lucide="scan-text" style="width:17px;vertical-align:middle;margin-right:7px"></i>Nhận diện văn bản</button><button class="btn secondary" id="clearBtn">Xóa tất cả</button></div>
+    <div class="progress" id="progress"><div id="progressBar"></div></div><div class="status" id="status" aria-live="polite"></div>
+    <div class="resultbox" id="resultbox"><div class="resulthead"><h3 id="resultTitle">Văn bản đã nhận diện</h3><span id="charCount" style="font-size:13px;color:#64748b"></span></div><textarea id="result" placeholder="Nội dung nhận diện sẽ xuất hiện tại đây..."></textarea><div class="actions"><button class="btn" id="copyBtn"><i data-lucide="copy" style="width:16px;vertical-align:middle;margin-right:6px"></i>Sao chép văn bản</button><button class="btn secondary" id="downloadBtn"><i data-lucide="download" style="width:16px;vertical-align:middle;margin-right:6px"></i>Tải tệp TXT</button></div></div>
+    <div class="info-card"><i data-lucide="scan-text"></i><b>Nhận diện văn bản từ hình ảnh</b>Trích xuất chữ từ ảnh nhanh chóng, hỗ trợ nhiều ngôn ngữ và trình bày nội dung dễ đọc.</div>
+   </section>
+   <div class="actions" style="margin:25px 0 28px;color:#64748b">Thao tác: <button class="btn secondary" id="shareBtn"><i data-lucide="share-2" style="width:16px;vertical-align:middle;margin-right:6px"></i>Chia sẻ</button></div>
+   <section class="panel content-card"><h2>Cách sử dụng</h2><div class="steps"><div class="step"><span class="num">1</span>Chọn hoặc kéo thả hình ảnh cần trích xuất chữ</div><div class="step"><span class="num">2</span>Chọn ngôn ngữ xuất hiện trong hình ảnh</div><div class="step"><span class="num">3</span>Chọn chế độ trích xuất văn bản hoặc trình bày có cấu trúc</div><div class="step"><span class="num">4</span>Nhấn nhận diện, sau đó sao chép hoặc tải kết quả</div></div></section>
+   <section class="panel content-card"><h2>Tính năng nổi bật</h2><div class="features"><div class="feature"><span class="check">✓</span>Nhận diện văn bản từ nhiều định dạng hình ảnh</div><div class="feature"><span class="check">✓</span>Hỗ trợ tiếng Việt và nhiều ngôn ngữ phổ biến</div><div class="feature"><span class="check">✓</span>Hai chế độ xuất văn bản linh hoạt</div><div class="feature"><span class="check">✓</span>Cho phép chỉnh sửa, sao chép và tải kết quả</div><div class="feature"><span class="check">✓</span>Xử lý trực tiếp trên trình duyệt</div></div></section>
+  </div>
+  <aside class="sidebar"><div class="side-title">CÔNG CỤ LIÊN QUAN</div><div class="related">
+   <a class="related-card" href="#"><div class="miniicon"><i data-lucide="align-left"></i></div><b>Tóm tắt văn bản AI</b><p>Tóm tắt nội dung nhanh chóng với nhiều độ dài khác nhau.</p></a>
+   <a class="related-card" href="#"><div class="miniicon"><i data-lucide="file-pen-line"></i></div><b>Công cụ viết AI</b><p>Hỗ trợ soạn email, bài viết và nội dung mạng xã hội.</p></a>
+   <a class="related-card" href="#"><div class="miniicon"><i data-lucide="image"></i></div><b>Công cụ hình ảnh AI</b><p>Hỗ trợ mô tả hình ảnh và tạo nội dung hình ảnh.</p></a>
+   <a class="related-card" href="#"><div class="miniicon"><i data-lucide="file-text"></i></div><b>Trợ lý PDF AI</b><p>Phân tích, tóm tắt và trích xuất nội dung từ PDF.</p></a>
+  </div></aside>
+ </div>
+</main>
+<footer>© 2026 Tool-web · Công cụ trực tuyến miễn phí</footer>
+<script>
+lucide.createIcons();
+const $=id=>document.getElementById(id);
+let selectedFile=null,mode='plain';
+const input=$('imageInput'),zone=$('dropzone');
+function setStatus(t){$('status').textContent=t}
+function setFile(file){
+ if(!file)return;
+ if(!file.type.startsWith('image/')){setStatus('Vui lòng chọn tệp hình ảnh hợp lệ.');return}
+ if(file.size>15*1024*1024){setStatus('Ảnh vượt quá dung lượng 15 MB.');return}
+ selectedFile=file;$('previewImg').src=URL.createObjectURL(file);$('fileName').textContent=file.name;$('fileSize').textContent=(file.size/1024/1024).toFixed(2)+' MB';$('preview').style.display='flex';$('extractBtn').disabled=false;setStatus('Đã thêm hình ảnh. Bạn có thể bắt đầu nhận diện.');
+}
+zone.addEventListener('click',()=>input.click());zone.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();input.click()}});
+input.addEventListener('change',e=>setFile(e.target.files[0]));
+['dragenter','dragover'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.add('drag')}));
+['dragleave','drop'].forEach(ev=>zone.addEventListener(ev,e=>{e.preventDefault();zone.classList.remove('drag')}));
+zone.addEventListener('drop',e=>setFile(e.dataTransfer.files[0]));
+$('removeImage').onclick=()=>{selectedFile=null;input.value='';$('preview').style.display='none';$('extractBtn').disabled=true;setStatus('Đã xóa hình ảnh.')};
+document.querySelectorAll('.mode-btn').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');mode=btn.dataset.mode}));
+function structureText(text){
+ return text.split(/\n+/).map(line=>line.trim()).filter(Boolean).map(line=>{
+  if(line.length<75&&(/[：:]$/.test(line)||(/^[A-ZÀ-Ỹ0-9\s]{4,}$/.test(line))))return '## '+line.replace(/[:：]$/,'');
+  if(/^[-•*]\s/.test(line))return '- '+line.replace(/^[-•*]\s*/,'');
+  if(/^\d+[.)]\s/.test(line))return line;
+  return line;
+ }).join('\n\n');
+}
+$('extractBtn').onclick=async()=>{
+ if(!selectedFile)return;
+ $('extractBtn').disabled=true;$('progress').style.display='block';$('progressBar').style.width='0%';$('resultbox').style.display='none';setStatus('Đang khởi tạo bộ nhận diện...');
+ try{
+  const lang=$('language').value;
+  const worker=await Tesseract.createWorker(lang,1,{logger:m=>{if(m.status==='recognizing text'){$('progressBar').style.width=Math.round(m.progress*100)+'%';setStatus('Đang nhận diện văn bản: '+Math.round(m.progress*100)+'%')}}});
+  const {data}=await worker.recognize(selectedFile);await worker.terminate();
+  const raw=(data.text||'').trim();if(!raw)throw new Error('Không tìm thấy văn bản trong hình ảnh. Hãy thử ảnh rõ nét hơn.');
+  $('result').value=mode==='structured'?structureText(raw):raw;
+  $('resultTitle').textContent=mode==='structured'?'Nội dung đã trình bày':'Văn bản đã nhận diện';
+  $('charCount').textContent=$('result').value.length+' ký tự';$('resultbox').style.display='block';setStatus('Hoàn tất! Bạn có thể chỉnh sửa hoặc tải kết quả.');$('progressBar').style.width='100%';
+  $('resultbox').scrollIntoView({behavior:'smooth',block:'nearest'});
+ }catch(err){setStatus('Không thể nhận diện: '+(err.message||'Đã xảy ra lỗi. Vui lòng thử lại.'))}
+ finally{$('extractBtn').disabled=false}
+};
+$('result').addEventListener('input',()=>$('charCount').textContent=$('result').value.length+' ký tự');
+$('copyBtn').onclick=async()=>{try{await navigator.clipboard.writeText($('result').value);setStatus('Đã sao chép văn bản.')}catch{ $('result').select();document.execCommand('copy');setStatus('Đã sao chép văn bản.')}};
+$('downloadBtn').onclick=()=>{const blob=new Blob([$('result').value],{type:'text/plain;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='extracted-text.txt';a.click();URL.revokeObjectURL(a.href)};
+$('clearBtn').onclick=()=>{selectedFile=null;input.value='';$('preview').style.display='none';$('extractBtn').disabled=true;$('resultbox').style.display='none';$('progress').style.display='none';$('result').value='';setStatus('Đã xóa toàn bộ nội dung.')};
+$('shareBtn').onclick=async()=>{if(navigator.share){try{await navigator.share({title:'Nhận diện văn bản AI - Tool-web',url:location.href})}catch{}}else{await navigator.clipboard.writeText(location.href);setStatus('Đã sao chép liên kết công cụ.')}};
+$('themeBtn').onclick=()=>{document.body.classList.toggle('dark');$('themeBtn').innerHTML=document.body.classList.contains('dark')?'<i data-lucide="sun"></i>':'<i data-lucide="moon"></i>';lucide.createIcons()};
+</script>
+</body>
+</html>
