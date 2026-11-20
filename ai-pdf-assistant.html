@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f7f9fc">
+<title>Trợ lý PDF thông minh | Tool-web</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--blue:#2563eb;--ink:#10213d;--muted:#64748b;--line:#e2e8f0;--surface:#fff;--bg:#f7f9fc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.topbar{height:76px;background:rgba(255,255,255,.94);border-bottom:1px solid #e8edf4;position:sticky;top:0;z-index:20;backdrop-filter:blur(14px)}
+.navwrap{max-width:1500px;height:100%;margin:auto;padding:0 28px;display:flex;align-items:center;gap:38px}
+.brand{display:flex;align-items:center;gap:10px;font-size:25px;font-weight:800;color:var(--blue);white-space:nowrap}
+.navlinks{display:flex;align-items:center;gap:8px}.navlinks a{padding:12px 15px;border-radius:15px;text-decoration:none;color:#475569;font-weight:600}.navlinks a.active,.navlinks a:hover{background:#eff6ff;color:var(--blue)}
+.search{margin-left:auto;position:relative}.search input{width:270px;border:1px solid var(--line);background:#f3f5f8;border-radius:18px;padding:11px 15px 11px 42px;outline:none}.search svg{position:absolute;left:14px;top:12px;color:#64748b}
+.iconbtn{border:0;background:transparent;color:#64748b;padding:9px;cursor:pointer;border-radius:12px}.container{max-width:1500px;margin:0 auto;padding:58px 28px 80px}
+.breadcrumb{color:#64748b;font-size:15px;margin-bottom:36px}.breadcrumb b{color:#0f172a}
+.hero{margin-bottom:26px}.herohead{display:flex;align-items:center;gap:20px}.heroicon{width:70px;height:70px;display:grid;place-items:center;background:#dbeafe;color:var(--blue);border-radius:22px;flex-shrink:0}.hero h1{font-size:42px;line-height:1.1;margin:0;font-weight:800;letter-spacing:-1.2px}.subtitle{font-size:19px;color:#64748b;margin-top:7px}.favorite{border:0;background:#f1f5f9;color:#94a3b8;width:48px;height:48px;border-radius:16px;cursor:pointer}.favorite.on{color:#ef476f;background:#fff1f2}.intro{font-size:16px;line-height:1.8;color:#475569;margin:20px 0 12px}.stars{display:flex;gap:8px;color:#cbd5e1}.stars button{background:none;border:0;color:inherit;cursor:pointer;padding:0}.stars button:hover,.stars button.selected{color:#f59e0b}
+.notice{border:1px solid #e9eef5;border-radius:18px;padding:17px 20px;margin:22px 0 28px;background:rgba(255,255,255,.48)}.notice-top{display:flex;gap:18px;align-items:center;flex-wrap:wrap;color:#64748b;font-size:14px}.notice-top span{display:flex;align-items:center;gap:7px}.notice-top .green{color:#059669}.notice p{margin:9px 0 0;color:#475569}
+.layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:34px;align-items:start}.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:0 5px 20px rgba(15,23,42,.025)}.workspace{padding:28px}.field-label{font-size:15px;font-weight:650;display:block;margin-bottom:10px;color:#263750}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px}.action{border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px 12px;font-weight:650;color:#475569;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:9px}.action:hover{border-color:#93c5fd;background:#f8fbff}.action.active{border-color:#8bbcff;background:#eff6ff;color:#1d4ed8;box-shadow:inset 0 0 0 1px #dbeafe}
+textarea{width:100%;min-height:230px;resize:vertical;border:1px solid var(--line);border-radius:18px;padding:18px 19px;background:#f8fafc;color:#172b4d;font:inherit;line-height:1.65;outline:none;transition:.2s}textarea:focus,select:focus{border-color:#93c5fd;box-shadow:0 0 0 4px #dbeafe;background:#fff}textarea::placeholder{color:#94a3b8}
+.meta{display:flex;justify-content:space-between;align-items:center;color:#94a3b8;font-size:13px;margin:9px 2px 20px;gap:10px}
+.question-wrap{display:none;margin:0 0 20px}.question-wrap.show{display:block}.question-wrap input{width:100%;border:1px solid var(--line);border-radius:14px;padding:13px 15px;outline:none}
+.primary{border:0;border-radius:15px;background:linear-gradient(135deg,#3478f6,#2458df);color:#fff;padding:14px 25px;font-weight:700;cursor:pointer;box-shadow:0 8px 18px rgba(37,99,235,.18);transition:.2s}.primary:hover{transform:translateY(-1px);box-shadow:0 12px 22px rgba(37,99,235,.24)}.primary:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.secondary{border:1px solid var(--line);border-radius:14px;background:#fff;color:#334155;padding:12px 17px;font-weight:650;cursor:pointer}.btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.result{margin-top:24px;border:1px solid #bfdbfe;background:linear-gradient(135deg,#f0f7ff,#f8fbff);border-radius:20px;overflow:hidden}.result-head{padding:16px 19px;border-bottom:1px solid #dbeafe;display:flex;align-items:center;justify-content:space-between;gap:12px}.result-title{font-weight:750;display:flex;align-items:center;gap:9px}.result-body{padding:20px;min-height:150px;color:#334155;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}.empty{text-align:center;color:#8293aa;padding:35px 10px}.empty svg{color:#60a5fa;margin:0 auto 12px}.result-body table{width:100%;border-collapse:collapse;background:white;font-size:14px}.result-body th,.result-body td{border:1px solid #dbe3ef;padding:9px;text-align:left}.result-body th{background:#eff6ff}
+.side-title{font-size:16px;font-weight:750;color:#64748b;margin:2px 0 16px}.related{padding:20px;margin-bottom:14px;display:block;text-decoration:none;color:inherit;transition:.2s}.related:hover{border-color:#93c5fd;transform:translateY(-2px);box-shadow:0 10px 24px rgba(37,99,235,.08)}.related-icon{width:48px;height:48px;background:#dbeafe;color:var(--blue);border-radius:15px;display:grid;place-items:center;margin-bottom:16px}.related h3{font-size:17px;font-weight:700;margin:0 0 6px}.related p{font-size:14px;color:#64748b;line-height:1.55;margin:0}
+.info{padding:25px;margin-top:26px}.info h2{font-size:23px;font-weight:800;margin:0 0 18px}.steps{display:grid;gap:15px}.step{display:flex;align-items:center;gap:13px;color:#52647d}.num{width:29px;height:29px;display:grid;place-items:center;background:#dbeafe;color:#2563eb;border-radius:50%;font-weight:700;font-size:14px;flex-shrink:0}.features{padding:25px;margin-top:24px}.features ul{list-style:none;padding:0;margin:14px 0 0;display:grid;gap:12px;color:#52647d}.features li{display:flex;gap:10px;align-items:center}.features li svg{color:#10b981;flex-shrink:0}.tip{padding:24px;margin-top:24px;background:#eff6ff;border:1px solid #dbeafe;border-radius:20px}.tip h2{font-size:21px;font-weight:800;margin:0 0 8px}.tip p{color:#52647d;margin:0;line-height:1.7}
+.actions-share{display:flex;align-items:center;gap:14px;margin:24px 0 0;color:#64748b}.toast{position:fixed;right:24px;bottom:24px;background:#10213d;color:white;padding:13px 18px;border-radius:14px;box-shadow:0 12px 30px #0f172a33;opacity:0;transform:translateY(10px);transition:.25s;z-index:50}.toast.show{opacity:1;transform:translateY(0)}
+body.dark{--bg:#0b1220;--surface:#111c2e;--ink:#e5edf9;--line:#26364d;color:var(--ink)}body.dark .topbar{background:rgba(13,22,38,.94);border-color:#26364d}body.dark .navlinks a{color:#c1cde0}body.dark .navlinks a.active,body.dark .navlinks a:hover{background:#172d50;color:#8db8ff}body.dark .search input,body.dark textarea{background:#0d1829;color:#e5edf9;border-color:#26364d}body.dark .breadcrumb b{color:#e5edf9}body.dark .intro,body.dark .notice p,body.dark .result-body,body.dark .step,body.dark .features ul,body.dark .tip p{color:#b7c5d9}body.dark .notice{background:#101b2d;border-color:#26364d}body.dark .action,body.dark .secondary,body.dark .favorite{background:#142238;color:#c5d2e5;border-color:#2a3b54}body.dark .action.active{background:#172e50;color:#8db8ff;border-color:#477dc7}body.dark .result{background:#132641;border-color:#315b8f}body.dark .result-head{border-color:#315b8f}body.dark .tip{background:#142b49;border-color:#284b78}body.dark .related{background:#111c2e}body.dark .related p{color:#a9bad1}
+@media(max-width:1050px){.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.side-title{grid-column:1/-1}.related{margin:0}.navwrap{gap:15px}.navlinks{gap:0}.navlinks a{padding:10px}}
+@media(max-width:700px){.topbar{height:auto;min-height:68px}.navwrap{padding:12px 16px;flex-wrap:wrap;gap:8px}.brand{font-size:21px}.navlinks{order:3;width:100%;overflow:auto}.navlinks a{font-size:13px;white-space:nowrap}.search{margin-left:auto}.search input{width:155px}.container{padding:30px 16px 55px}.hero h1{font-size:31px}.heroicon{width:56px;height:56px}.subtitle{font-size:16px}.favorite{width:40px;height:40px}.workspace{padding:18px}.actions{grid-template-columns:repeat(2,1fr)}textarea{min-height:190px}.sidebar{grid-template-columns:1fr}.info,.features{padding:20px}}
+</style>
+</head>
+<body>
+<header class="topbar">
+ <div class="navwrap">
+  <a class="brand" href="#" aria-label="Tool-web"><i data-lucide="wrench" size="31"></i><span>Tool-web</span></a>
+  <nav class="navlinks"><a href="#">Trang chủ</a><a class="active" href="#">Công cụ</a><a href="#">Danh mục</a><a href="#">Bài viết</a><a href="#">Yêu thích</a><a href="#">Giới thiệu</a><a href="#">Liên hệ</a></nav>
+  <div class="search"><i data-lucide="search" size="18"></i><input type="search" placeholder="Tìm kiếm công cụ..." aria-label="Tìm kiếm công cụ"></div>
+  <button class="iconbtn" id="themeBtn" title="Đổi giao diện"><i data-lucide="moon" size="23"></i></button>
+ </div>
+</header>
+<main class="container">
+ <div class="breadcrumb">Trang chủ&nbsp; / &nbsp;Công cụ AI&nbsp; / &nbsp;<b>Trợ lý PDF thông minh</b></div>
+ <section class="hero">
+  <div class="herohead">
+   <div class="heroicon"><i data-lucide="file-text" size="34"></i></div>
+   <div><h1>Trợ lý PDF thông minh</h1><div class="subtitle">Tóm tắt tài liệu, trích xuất bảng, tìm ý chính và hỏi đáp nội dung PDF</div></div>
+   <button class="favorite" id="favoriteBtn" title="Thêm vào yêu thích"><i data-lucide="heart" size="23"></i></button>
+  </div>
+  <p class="intro">Biến nội dung PDF dài thành thông tin dễ hiểu chỉ trong vài thao tác. Chọn chức năng bạn cần, dán nội dung văn bản đã trích xuất từ PDF và nhận kết quả được trình bày rõ ràng. Dữ liệu được xử lý ngay trên trình duyệt bằng các quy tắc cục bộ của công cụ.</p>
+  <div class="stars" aria-label="Đánh giá công cụ"><button data-star="1"><i data-lucide="star" size="29"></i></button><button data-star="2"><i data-lucide="star" size="29"></i></button><button data-star="3"><i data-lucide="star" size="29"></i></button><button data-star="4"><i data-lucide="star" size="29"></i></button><button data-star="5"><i data-lucide="star" size="29"></i></button></div>
+ </section>
+ <section class="notice">
+  <div class="notice-top"><span class="green"><i data-lucide="shield-check" size="17"></i> Kết nối HTTPS</span><span>│</span><span class="green"><i data-lucide="flask-conical" size="17"></i> Xử lý trực tiếp trên trình duyệt</span><span>│</span><span><i data-lucide="zap" size="17" style="color:#f97316"></i> Miễn phí sử dụng</span></div>
+  <p>Nội dung bạn nhập được xử lý cục bộ trong trình duyệt; công cụ mẫu này không gửi tài liệu lên máy chủ.</p>
+ </section>
+ <div class="layout">
+  <div>
+   <section class="panel workspace">
+    <label class="field-label">Chọn chức năng</label>
+    <div class="actions">
+     <button class="action active" data-mode="summary"><span>📋</span> Tóm tắt</button>
+     <button class="action" data-mode="tables"><span>📊</span> Trích xuất bảng</button>
+     <button class="action" data-mode="points"><span>🔑</span> Ý chính</button>
+     <button class="action" data-mode="question"><span>❔</span> Hỏi đáp</button>
+    </div>
+    <label class="field-label" for="sourceText">Nội dung văn bản PDF</label>
+    <textarea id="sourceText" placeholder="Dán nội dung văn bản được trích xuất từ tệp PDF vào đây...&#10;&#10;Bạn có thể sao chép văn bản từ trình đọc PDF hoặc sử dụng công cụ chuyển PDF sang văn bản trước."></textarea>
+    <div class="meta"><span id="charCount">0 ký tự</span><span id="wordCount">0 từ</span></div>
+    <div class="question-wrap" id="questionWrap"><label class="field-label" for="questionInput">Câu hỏi của bạn</label><input id="questionInput" placeholder="Nhập câu hỏi về nội dung tài liệu..."></div>
+    <div class="btnrow"><button class="primary" id="processBtn"><i data-lucide="sparkles" size="17" style="display:inline;vertical-align:-3px;margin-right:6px"></i><span id="processLabel">Xử lý nội dung</span></button><button class="secondary" id="clearBtn">Xóa nội dung</button></div>
+    <section class="result" aria-live="polite">
+     <div class="result-head"><div class="result-title"><i data-lucide="file-check" size="19"></i><span id="resultHeading">Kết quả tóm tắt</span></div><div class="btnrow"><button class="secondary" id="copyBtn">Sao chép</button><button class="secondary" id="downloadBtn">Tải TXT</button></div></div>
+     <div class="result-body" id="resultBody"><div class="empty"><i data-lucide="file-search" size="38"></i><div style="font-weight:700;color:#536781">Kết quả sẽ xuất hiện tại đây</div><div style="font-size:14px;margin-top:5px">Nhập nội dung PDF và chọn chức năng để bắt đầu.</div></div></div>
+    </section>
+   </section>
+   <div class="actions-share"><span>Chia sẻ công cụ:</span><button class="secondary" id="shareBtn"><i data-lucide="share-2" size="17" style="display:inline;vertical-align:-3px;margin-right:5px"></i> Chia sẻ</button></div>
+   <section class="panel info"><h2>Cách sử dụng</h2><div class="steps"><div class="step"><span class="num">1</span> Chọn một chức năng: Tóm tắt, Trích xuất bảng, Ý chính hoặc Hỏi đáp</div><div class="step"><span class="num">2</span> Sao chép và dán nội dung văn bản từ tệp PDF vào khung nhập</div><div class="step"><span class="num">3</span> Nếu chọn Hỏi đáp, hãy nhập câu hỏi liên quan đến tài liệu</div><div class="step"><span class="num">4</span> Nhấn Xử lý nội dung, sau đó sao chép hoặc tải kết quả</div></div></section>
+   <section class="panel features"><h2>Điểm nổi bật</h2><ul><li><i data-lucide="check" size="19"></i> Tóm tắt nội dung thành các đoạn ngắn, dễ đọc</li><li><i data-lucide="check" size="19"></i> Nhận diện dữ liệu dạng bảng từ văn bản có dấu phân cách</li><li><i data-lucide="check" size="19"></i> Lọc ra các câu chứa thông tin quan trọng</li><li><i data-lucide="check" size="19"></i> Tìm đoạn văn liên quan đến câu hỏi của bạn</li><li><i data-lucide="check" size="19"></i> Sao chép và tải kết quả về máy</li></ul></section>
+   <section class="tip"><h2>💡 Mẹo để có kết quả tốt hơn</h2><p>Nên sao chép đầy đủ nội dung PDF, giữ nguyên tiêu đề và xuống dòng. Với bảng biểu, hãy dùng văn bản có dấu tab, dấu gạch đứng (|) hoặc dấu phẩy để công cụ dễ nhận diện. Đây là công cụ xử lý văn bản cục bộ, không thay thế việc kiểm tra lại thông tin trong tài liệu gốc.</p></section>
+  </div>
+  <aside class="sidebar"><div class="side-title">CÔNG CỤ LIÊN QUAN</div>
+   <a class="panel related" href="#"><div class="related-icon"><i data-lucide="align-left"></i></div><h3>Công cụ tóm tắt văn bản</h3><p>Rút gọn nội dung dài thành những ý quan trọng, dễ theo dõi.</p></a>
+   <a class="panel related" href="#"><div class="related-icon"><i data-lucide="pen-line"></i></div><h3>Công cụ viết nội dung AI</h3><p>Hỗ trợ soạn thảo email, bài viết, nội dung và tiêu đề.</p></a>
+   <a class="panel related" href="#"><div class="related-icon"><i data-lucide="image"></i></div><h3>Nhận diện văn bản từ ảnh</h3><p>Trích xuất chữ từ hình ảnh và sắp xếp lại nội dung.</p></a>
+   <a class="panel related" href="#"><div class="related-icon"><i data-lucide="file-type"></i></div><h3>Chuyển PDF sang Word</h3><p>Chuyển tài liệu PDF thành văn bản có thể chỉnh sửa.</p></a>
+  </aside>
+ </div>
+</main>
+<div class="toast" id="toast"></div>
+<script>
+lucide.createIcons();
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let mode='summary', outputText='';
+const source=$('#sourceText'), result=$('#resultBody');
+const names={summary:'Kết quả tóm tắt',tables:'Bảng dữ liệu trích xuất',points:'Các ý chính',question:'Kết quả hỏi đáp'};
+const labels={summary:'Tóm tắt nội dung',tables:'Trích xuất bảng',points:'Tìm ý chính',question:'Tìm câu trả lời'};
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function escapeHtml(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function sentences(text){return text.replace(/\s+/g,' ').split(/(?<=[.!?。！？])\s+/).map(s=>s.trim()).filter(s=>s.length>20)}
+function words(s){return (s.toLowerCase().match(/[\p{L}\p{N}]+/gu)||[])}
+function setOutput(text,html){outputText=text;result.innerHTML=html||escapeHtml(text).replace(/\n/g,'<br>')}
+$$('.action').forEach(btn=>btn.addEventListener('click',()=>{mode=btn.dataset.mode;$$('.action').forEach(b=>b.classList.toggle('active',b===btn));$('#questionWrap').classList.toggle('show',mode==='question');$('#resultHeading').textContent=names[mode];$('#processLabel').textContent=labels[mode];}));
+source.addEventListener('input',()=>{$('#charCount').textContent=source.value.length.toLocaleString('vi-VN')+' ký tự';$('#wordCount').textContent=words(source.value).length.toLocaleString('vi-VN')+' từ'});
+function summarize(text){let ss=sentences(text);if(!ss.length)return text.trim();let target=Math.max(2,Math.ceil(ss.length*.28));if(ss.length<=4)return ss.join('\n\n');let freq={};ss.forEach(s=>words(s).forEach(w=>{if(w.length>3)freq[w]=(freq[w]||0)+1}));let ranked=ss.map((s,i)=>({s,i,score:words(s).reduce((a,w)=>a+(freq[w]||0),0)/Math.max(words(s).length,1)})).sort((a,b)=>b.score-a.score).slice(0,target).sort((a,b)=>a.i-b.i);return ranked.map(x=>'• '+x.s).join('\n\n')}
+function extractTables(text){let lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);let candidates=lines.map(line=>({line,cells:line.includes('|')?line.split('|').map(x=>x.trim()).filter(Boolean):line.includes('\t')?line.split('\t').map(x=>x.trim()):line.split(/\s{2,}/).map(x=>x.trim())})).filter(x=>x.cells.length>=2);if(!candidates.length)return {text:'Không tìm thấy dòng có cấu trúc bảng rõ ràng.\n\nGợi ý: hãy dán bảng có các cột được ngăn cách bằng dấu |, phím Tab hoặc nhiều khoảng trắng.',html:null};let max=Math.max(...candidates.map(x=>x.cells.length));let rows=candidates.map(x=>x.cells);let html='<table><tbody>'+rows.map((r,i)=>'<tr>'+Array.from({length:max},(_,j)=>{let v=escapeHtml(r[j]||'');return i===0?'<th>'+v+'</th>':'<td>'+v+'</td>'}).join('')+'</tr>').join('')+'</tbody></table>';return {text:rows.map(r=>r.join(' | ')).join('\n'),html}}
+function keyPoints(text){let ss=sentences(text);if(!ss.length)return text.trim();let cue=/quan trọng|mục tiêu|kết quả|nguyên nhân|kết luận|bao gồm|đặc điểm|lợi ích|hạn chế|cần|phải|lưu ý|therefore|important|result|conclusion|includes|must|should|key|objective/i;let chosen=ss.filter(s=>cue.test(s));if(chosen.length<3)chosen=ss.slice(0,Math.min(8,ss.length));return chosen.slice(0,12).map((s,i)=>(i+1)+'. '+s).join('\n\n')}
+function answerQuestion(text,q){if(!q.trim())return 'Vui lòng nhập câu hỏi trước khi xử lý.';let ss=sentences(text);let qwords=words(q).filter(w=>w.length>2);let scored=ss.map(s=>({s,score:qwords.reduce((n,w)=>n+(s.toLowerCase().includes(w)?1:0),0)})).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,5);if(!scored.length)return 'Không tìm thấy đoạn văn có từ khóa trùng khớp với câu hỏi.\n\nBạn có thể thử diễn đạt câu hỏi bằng những từ xuất hiện trong tài liệu.';return 'Các đoạn liên quan được tìm thấy trong tài liệu:\n\n'+scored.map((x,i)=>(i+1)+'. '+x.s).join('\n\n')+'\n\nLưu ý: Đây là kết quả tìm kiếm theo từ khóa, không phải câu trả lời do mô hình AI suy luận.'}
+$('#processBtn').addEventListener('click',()=>{const text=source.value.trim();if(!text){toast('Vui lòng nhập nội dung PDF trước.');source.focus();return}let out;if(mode==='summary')out=summarize(text);else if(mode==='points')out=keyPoints(text);else if(mode==='tables'){const t=extractTables(text);out=t.text;setOutput(out,t.html);toast('Đã xử lý nội dung bảng.');return}else out=answerQuestion(text,$('#questionInput').value);setOutput(out);toast('Đã xử lý xong nội dung.');});
+$('#clearBtn').addEventListener('click',()=>{source.value='';$('#questionInput').value='';$('#charCount').textContent='0 ký tự';$('#wordCount').textContent='0 từ';setOutput('');result.innerHTML='<div class="empty"><i data-lucide="file-search" size="38"></i><div style="font-weight:700;color:#536781">Kết quả sẽ xuất hiện tại đây</div><div style="font-size:14px;margin-top:5px">Nhập nội dung PDF và chọn chức năng để bắt đầu.</div></div>';lucide.createIcons();toast('Đã xóa nội dung.');});
+$('#copyBtn').addEventListener('click',async()=>{if(!outputText){toast('Chưa có kết quả để sao chép.');return}try{await navigator.clipboard.writeText(outputText);toast('Đã sao chép kết quả.')}catch(e){toast('Trình duyệt không cho phép sao chép tự động.')}});
+$('#downloadBtn').addEventListener('click',()=>{if(!outputText){toast('Chưa có kết quả để tải xuống.');return}const blob=new Blob(['\ufeff'+outputText],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='pdf-analysis-result.txt';a.click();URL.revokeObjectURL(url);toast('Đã tạo tệp TXT.');});
+$('#themeBtn').addEventListener('click',()=>{document.body.classList.toggle('dark');$('#themeBtn').innerHTML=document.body.classList.contains('dark')?'<i data-lucide="sun" size="23"></i>':'<i data-lucide="moon" size="23"></i>';lucide.createIcons()});
+$('#favoriteBtn').addEventListener('click',()=>{$('#favoriteBtn').classList.toggle('on');toast($('#favoriteBtn').classList.contains('on')?'Đã thêm vào danh sách yêu thích.':'Đã bỏ khỏi danh sách yêu thích.')});
+$$('[data-star]').forEach(b=>b.addEventListener('click',()=>{$$('[data-star]').forEach(x=>x.classList.toggle('selected',Number(x.dataset.star)<=Number(b.dataset.star)));toast('Cảm ơn bạn đã đánh giá '+b.dataset.star+'/5 sao.')}))
+$('#shareBtn').addEventListener('click',async()=>{const data={title:'Trợ lý PDF thông minh - Tool-web',text:'Công cụ hỗ trợ xử lý nội dung PDF'};if(navigator.share){try{await navigator.share(data)}catch(e){}}else{try{await navigator.clipboard.writeText(location.href);toast('Đã sao chép liên kết trang.')}catch(e){toast('Hãy sao chép địa chỉ trang từ thanh trình duyệt.')}}});
+</script>
+</body>
+</html>
