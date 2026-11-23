@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bộ đếm ký tự bài đăng</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+*{box-sizing:border-box}body{font-family:Inter,system-ui,sans-serif;background:#f6f8fc;color:#17233c}.card{background:#fff;border:1px solid #e2e8f0;border-radius:22px;box-shadow:0 8px 28px #0f172a08}.soft{background:#f8fafc;border:1px solid #e2e8f0}.stat{border:1px solid #e2e8f0;border-radius:17px;background:linear-gradient(#fff,#fbfdff)}.btn{transition:.2s}.btn:hover{transform:translateY(-1px)}textarea{resize:vertical}.dark{background:#0f172a;color:#e2e8f0}.dark .card,.dark header,.dark footer,.dark .stat{background:#172033;border-color:#334155;color:#e2e8f0}.dark .soft,.dark textarea{background:#111b2e;border-color:#334155;color:#e2e8f0}.dark h1,.dark h2,.dark h3,.dark label{color:#e2e8f0!important}
+</style>
+</head>
+<body>
+<header class="bg-white/90 backdrop-blur sticky top-0 z-30 border-b border-slate-200">
+<div class="max-w-[1450px] mx-auto px-5 h-[74px] flex items-center gap-8">
+<a class="flex items-center gap-2 text-blue-600 text-2xl font-extrabold" href="#"><i data-lucide="wrench" class="w-8 h-8"></i>Tool-web</a>
+<nav class="hidden lg:flex gap-2 text-slate-600 font-semibold"><a class="px-4 py-3 rounded-xl hover:bg-slate-100" href="#">Trang chủ</a><a class="px-4 py-3 rounded-xl bg-blue-50 text-blue-600" href="#">Công cụ</a><a class="px-4 py-3 rounded-xl hover:bg-slate-100" href="#">Danh mục</a><a class="px-4 py-3 rounded-xl hover:bg-slate-100" href="#">Bài viết</a><a class="px-4 py-3 rounded-xl hover:bg-slate-100" href="#">Yêu thích</a><a class="px-4 py-3 rounded-xl hover:bg-slate-100" href="#">Giới thiệu</a><a class="px-4 py-3 rounded-xl hover:bg-slate-100" href="#">Liên hệ</a></nav>
+<div class="ml-auto flex items-center gap-3"><div class="hidden sm:flex items-center gap-2 bg-slate-100 rounded-full px-4 py-2.5 w-56 text-slate-400"><i data-lucide="search" class="w-4 h-4"></i><span class="text-sm">Tìm công cụ...</span></div><button id="theme" class="w-10 h-10 rounded-full hover:bg-slate-100 flex items-center justify-center"><i data-lucide="moon"></i></button></div>
+</div></header>
+<main class="max-w-[1450px] mx-auto px-5 pt-10 pb-16">
+<div class="text-sm text-slate-500 mb-9">Trang chủ　/　Mạng xã hội & Tiếp thị　/　<span class="text-slate-900 font-semibold">Bộ đếm ký tự</span></div>
+<section class="mb-7">
+<div class="flex items-center gap-5 mb-5"><div class="w-16 h-16 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center"><i data-lucide="feather" class="w-9 h-9"></i></div><div><div class="flex items-center gap-3 flex-wrap"><h1 class="text-3xl md:text-[42px] font-extrabold tracking-tight text-slate-900">Bộ đếm ký tự bài đăng</h1><button id="favorite" class="w-11 h-11 rounded-xl bg-white border border-slate-200 text-slate-400"><i data-lucide="heart"></i></button></div><p class="text-slate-500 text-lg mt-1">Đếm ký tự theo thời gian thực, kiểm tra giới hạn và tối ưu nội dung bài đăng.</p></div></div>
+<p class="text-slate-600 leading-7">Dán nội dung bài viết vào khung bên dưới để xem số ký tự, số từ, số dòng, biểu tượng cảm xúc và số bài đăng ước tính. Công cụ xử lý trực tiếp trên trình duyệt, nội dung không được gửi lên máy chủ.</p>
+<div class="flex gap-2 mt-4 text-slate-300" id="ratings"><button>☆</button><button>☆</button><button>☆</button><button>☆</button><button>☆</button></div>
+</section>
+<section class="soft rounded-2xl p-5 mb-7 text-sm text-slate-500"><div class="flex flex-wrap gap-5"><span class="text-emerald-600">♧ <span class="text-slate-500">Bảo mật HTTPS</span></span><span class="text-emerald-600">♧ <span class="text-slate-500">Xử lý ngay trên trình duyệt</span></span><span class="text-orange-500">✦ <span class="text-slate-500">Miễn phí sử dụng</span></span></div><p class="mt-3 text-slate-600">Nội dung bạn nhập chỉ được xử lý trên thiết bị hiện tại và không tải lên máy chủ.</p></section>
+<div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_330px] gap-8 items-start">
+<section class="card p-5 md:p-7">
+<div class="flex justify-between items-center gap-3 mb-3"><label for="content" class="font-semibold">Nhập hoặc dán nội dung bài viết</label><span class="text-xs font-bold text-blue-600 bg-blue-50 rounded-full px-3 py-2">Giới hạn 280 ký tự</span></div>
+<textarea id="content" rows="8" placeholder="Bạn đang nghĩ gì? Hãy nhập nội dung bài viết tại đây..." class="soft w-full rounded-[20px] p-5 text-base leading-7 outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 min-h-[220px]"></textarea>
+<div class="mt-4"><div class="h-2.5 bg-slate-100 rounded-full overflow-hidden"><div id="bar" class="h-full bg-blue-500 rounded-full transition-all" style="width:0%"></div></div><div class="flex justify-between mt-2 text-sm"><b id="remaining">Còn 280 ký tự</b><span id="percent" class="text-slate-400">0% đã sử dụng</span></div></div>
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mt-6">
+<div class="stat p-4 text-center"><b id="chars" class="text-2xl text-blue-600">0</b><p class="text-xs text-slate-500 mt-1">Ký tự tính giới hạn</p></div>
+<div class="stat p-4 text-center"><b id="raw" class="text-2xl text-blue-600">0</b><p class="text-xs text-slate-500 mt-1">Tổng ký tự</p></div>
+<div class="stat p-4 text-center"><b id="words" class="text-2xl text-blue-600">0</b><p class="text-xs text-slate-500 mt-1">Số từ</p></div>
+<div class="stat p-4 text-center"><b id="lines" class="text-2xl text-blue-600">0</b><p class="text-xs text-slate-500 mt-1">Số dòng</p></div>
+<div class="stat p-4 text-center"><b id="emoji" class="text-2xl text-blue-600">0</b><p class="text-xs text-slate-500 mt-1">Biểu tượng</p></div>
+<div class="stat p-4 text-center"><b id="posts" class="text-2xl text-blue-600">1</b><p class="text-xs text-slate-500 mt-1">Bài đăng ước tính</p></div>
+</div>
+<div class="flex flex-wrap gap-3 mt-6"><button id="copy" class="btn flex items-center gap-2 px-5 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold"><i data-lucide="copy" class="w-4 h-4"></i>Sao chép nội dung</button><button id="clear" class="btn flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-200 text-slate-700 font-semibold"><i data-lucide="eraser" class="w-4 h-4"></i>Xóa nội dung</button><button id="reset" class="btn flex items-center gap-2 px-5 py-3 rounded-xl border border-slate-200 text-slate-700 font-semibold"><i data-lucide="rotate-ccw" class="w-4 h-4"></i>Đặt lại</button></div>
+<div class="soft rounded-2xl p-5 mt-7"><h3 class="font-bold mb-3">Quy tắc đếm ký tự</h3><ul class="space-y-2 text-sm text-slate-600"><li>• Mỗi ký tự thông thường được tính là 1 ký tự.</li><li>• Đường dẫn được tính theo độ dài thực tế trong công cụ này.</li><li>• Một số biểu tượng cảm xúc có thể gồm nhiều mã Unicode.</li><li>• Giới hạn 280 ký tự dùng để tham khảo khi soạn bài đăng ngắn.</li></ul></div><div id="message" class="hidden mt-4 rounded-xl p-3 text-sm font-semibold"></div>
+</section>
+<aside><h2 class="font-bold text-slate-500 text-sm tracking-wide mb-4">CÔNG CỤ LIÊN QUAN</h2><div class="space-y-4">
+<a href="#" class="card p-5 block hover:-translate-y-1 transition"><span class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4"><i data-lucide="hash"></i></span><b>Tạo hashtag</b><p class="text-sm text-slate-500 mt-2">Gợi ý hashtag phù hợp cho nội dung mạng xã hội.</p></a>
+<a href="#" class="card p-5 block hover:-translate-y-1 transition"><span class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4"><i data-lucide="qr-code"></i></span><b>Mã QR mạng xã hội</b><p class="text-sm text-slate-500 mt-2">Tạo mã QR dẫn đến trang cá nhân hoặc hồ sơ mạng xã hội.</p></a>
+<a href="#" class="card p-5 block hover:-translate-y-1 transition"><span class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4"><i data-lucide="link"></i></span><b>Tạo liên kết UTM</b><p class="text-sm text-slate-500 mt-2">Tạo tham số theo dõi hiệu quả chiến dịch.</p></a>
+<a href="#" class="card p-5 block hover:-translate-y-1 transition"><span class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4"><i data-lucide="share-2"></i></span><b>Tạo thẻ chia sẻ</b><p class="text-sm text-slate-500 mt-2">Tối ưu thông tin hiển thị khi chia sẻ liên kết.</p></a>
+</div></aside></div>
+<section class="card p-6 md:p-8 mt-8"><h2 class="text-2xl font-extrabold mb-6">Hướng dẫn sử dụng</h2><ol class="space-y-4 text-slate-600"><li>①　Nhập hoặc dán nội dung bài viết vào khung văn bản.</li><li>②　Theo dõi số ký tự, số từ, số dòng và thanh tiến trình tự động cập nhật.</li><li>③　Sao chép nội dung hoặc xóa để bắt đầu bài viết mới.</li></ol></section>
+</main>
+<footer class="border-t border-slate-200 bg-white py-7 text-center text-sm text-slate-500">© 2026 Tool-web. Công cụ tiện ích trực tuyến.</footer>
+<script>
+lucide.createIcons();
+const el=id=>document.getElementById(id), input=el('content'), limit=280;
+function graphemes(s){try{return [...new Intl.Segmenter('vi',{granularity:'grapheme'}).segment(s)].map(x=>x.segment)}catch{return [...s]}}
+function update(){let v=input.value,g=graphemes(v),n=g.length,w=v.trim()?v.trim().split(/\s+/u).length:0,lines=v.length?v.split(/\r\n|\r|\n/).length:0,em=g.filter(x=>/\p{Extended_Pictographic}/u.test(x)).length,p=Math.min(n/limit*100,100);el('chars').textContent=n;el('raw').textContent=v.length;el('words').textContent=w;el('lines').textContent=lines;el('emoji').textContent=em;el('posts').textContent=Math.max(1,Math.ceil(n/limit));el('remaining').textContent=n>limit?'Vượt '+(n-limit)+' ký tự':'Còn '+(limit-n)+' ký tự';el('remaining').className='font-semibold '+(n>limit?'text-rose-600':'text-slate-700');el('percent').textContent=Math.round(p)+'% đã sử dụng';el('bar').style.width=p+'%';el('bar').className='h-full rounded-full '+(n>limit?'bg-rose-500':n>240?'bg-amber-400':'bg-blue-500')}
+function notice(t,ok=true){el('message').textContent=t;el('message').className='mt-4 rounded-xl p-3 text-sm font-semibold '+(ok?'bg-emerald-50 text-emerald-700':'bg-rose-50 text-rose-700');setTimeout(()=>el('message').classList.add('hidden'),2500)}
+input.addEventListener('input',update);
+el('copy').onclick=async()=>{if(!input.value)return notice('Bạn chưa nhập nội dung để sao chép.',false);try{await navigator.clipboard.writeText(input.value);notice('Đã sao chép nội dung.')}catch{input.select();document.execCommand('copy');notice('Đã sao chép nội dung.')}};
+function clear(){input.value='';update();input.focus()}el('clear').onclick=()=>{clear();notice('Đã xóa nội dung.')};el('reset').onclick=()=>{clear();notice('Đã đặt lại bộ đếm.')};
+el('favorite').onclick=e=>{let b=e.currentTarget;b.classList.toggle('text-rose-500');b.innerHTML=b.classList.contains('text-rose-500')?'<i data-lucide="heart" fill="currentColor"></i>':'<i data-lucide="heart"></i>';lucide.createIcons();notice(b.classList.contains('text-rose-500')?'Đã thêm vào yêu thích.':'Đã bỏ khỏi yêu thích.')};
+el('theme').onclick=()=>document.body.classList.toggle('dark');
+document.querySelectorAll('#ratings button').forEach((b,i)=>b.onclick=()=>{document.querySelectorAll('#ratings button').forEach((x,j)=>x.textContent=j<=i?'★':'☆');document.querySelectorAll('#ratings button').forEach(x=>x.className='text-2xl '+(x.textContent==='★'?'text-amber-400':'text-slate-300'));notice('Cảm ơn bạn đã đánh giá '+(i+1)+'/5 sao.')});
+update();
+</script>
+</body></html>
