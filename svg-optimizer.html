@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tối ưu SVG trực tuyến | Tool-web</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--blue:#2563eb;--ink:#142033;--muted:#64748b;--line:#e2e8f0;--page:#f7f9fc}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+.topbar{height:80px;background:rgba(255,255,255,.94);border-bottom:1px solid #e8edf4;position:sticky;top:0;z-index:20;backdrop-filter:blur(12px)}
+.navwrap{max-width:1560px;height:100%;margin:auto;padding:0 28px;display:flex;align-items:center;gap:36px}
+.brand{display:flex;align-items:center;gap:10px;color:var(--blue);font-size:25px;font-weight:800;text-decoration:none;white-space:nowrap}
+.navlinks{display:flex;align-items:center;gap:7px}.navlinks a{padding:12px 15px;border-radius:15px;text-decoration:none;color:#475569;font-weight:600}.navlinks a.active,.navlinks a:hover{background:#eff6ff;color:var(--blue)}
+.search{margin-left:auto;width:265px;border:1px solid var(--line);background:#f1f3f6;border-radius:18px;padding:10px 15px;color:#64748b}
+.page{max-width:1560px;margin:0 auto;padding:54px 28px 80px}.crumb{color:#64748b;margin-bottom:40px}.crumb b{color:#172033;font-weight:650}.cluster{font-size:14px;color:#64748b;margin-bottom:20px}.pill{color:var(--blue);background:#eff6ff;border-radius:20px;padding:5px 12px;margin:0 7px}
+.hero{display:flex;align-items:center;gap:20px}.heroicon{width:68px;height:68px;border-radius:22px;background:#dbeafe;color:var(--blue);display:grid;place-items:center;flex:none}.hero h1{font-size:42px;line-height:1.1;margin:0 0 8px;font-weight:800;letter-spacing:-1px}.subtitle{font-size:19px;color:#64748b}.heart{margin-left:6px;width:50px;height:50px;border:0;border-radius:16px;background:#f1f3f6;color:#94a3b8}
+.intro{margin:25px 0 14px;color:#475569;line-height:1.7;font-size:16px}.stars{display:flex;gap:12px;color:#cbd5e1;margin-bottom:26px}.notice{border:1px solid #edf0f5;border-radius:17px;padding:16px 20px;margin:14px 0;background:#ffffff66;color:#52647b}.notice small{display:block;color:#64748b;margin-bottom:8px}.notice strong{color:#16a34a;font-weight:600}.layout{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:32px;margin-top:28px;align-items:start}
+.panel{background:white;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 3px 12px rgba(15,23,42,.025)}
+.drop{border:2px dashed #cbd5e1;border-radius:20px;background:#f9fbff;min-height:250px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:25px;transition:.2s;cursor:pointer}.drop:hover,.drop.drag{border-color:#3b82f6;background:#eff6ff}.drop .spark{color:#94a3b8;margin-bottom:14px}.drop h3{color:var(--blue);font-size:17px;font-weight:700;margin:0 0 6px}.drop p{color:#94a3b8;margin:3px;font-size:14px}
+.btn{border:0;border-radius:14px;padding:12px 20px;font-weight:700;cursor:pointer;transition:.18s}.primary{background:var(--blue);color:white;box-shadow:0 5px 12px #2563eb24}.primary:hover{background:#1d4ed8;transform:translateY(-1px)}.secondary{background:#f1f5f9;color:#263449}.outline{background:white;border:1px solid var(--line);color:#263449}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.label{display:block;font-weight:650;margin:23px 0 9px;color:#334155}textarea{width:100%;min-height:170px;resize:vertical;border:1px solid var(--line);border-radius:17px;padding:17px;font:13px/1.6 ui-monospace,SFMono-Regular,Consolas,monospace;background:#f9fafb;color:#334155;outline:none}textarea:focus,input:focus{border-color:#3b82f6;box-shadow:0 0 0 3px #3b82f61c}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.status{margin-top:18px;padding:14px 16px;border-radius:14px;background:#f8fafc;color:#64748b;font-size:14px}.status.good{background:#f0fdf4;color:#15803d}.status.error{background:#fef2f2;color:#b91c1c}
+.result{display:none;margin-top:22px;border:1px solid #bfdbfe;border-radius:18px;background:#eff6ff;padding:20px}.result.show{display:block}.resultgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.metric{background:white;border-radius:14px;padding:14px}.metric span{display:block;color:#64748b;font-size:13px}.metric b{font-size:22px;color:#1d4ed8}
+.preview{margin-top:18px;display:none}.preview.show{display:block}.previewbox{min-height:180px;display:grid;place-items:center;border:1px solid var(--line);border-radius:16px;background:repeating-conic-gradient(#f8fafc 0% 25%,white 0% 50%) 50%/22px 22px;padding:18px;overflow:hidden}.previewbox svg{max-width:100%;max-height:280px}
+.sidebar h3{font-size:16px;color:#64748b;letter-spacing:.04em;margin:3px 0 16px}.related{display:block;text-decoration:none;color:inherit;background:white;border:1px solid var(--line);border-radius:20px;padding:22px;margin-bottom:14px;transition:.2s}.related:hover{border-color:#93c5fd;box-shadow:0 5px 14px #0f172a0d;transform:translateY(-2px)}.related .ico{width:48px;height:48px;border-radius:15px;background:#dbeafe;color:var(--blue);display:grid;place-items:center;margin-bottom:16px}.related b{display:block;margin-bottom:7px}.related p{margin:0;color:#718096;line-height:1.5;font-size:15px}
+.below{margin-top:32px}.below h2{font-size:23px;font-weight:800;margin:0 0 20px}.steps{display:grid;gap:17px}.step{display:flex;align-items:center;gap:14px;color:#52647b}.num{width:30px;height:30px;border-radius:50%;background:#dbeafe;color:var(--blue);display:grid;place-items:center;font-weight:700;flex:none}.featurelist{display:grid;gap:12px;color:#52647b}.featurelist div:before{content:"✓";color:#16a34a;font-weight:800;margin-right:12px}
+footer{margin-top:55px;padding:28px 0;border-top:1px solid var(--line);color:#94a3b8;text-align:center;font-size:14px}
+@media(max-width:950px){.navwrap{gap:15px}.navlinks{display:none}.search{width:200px}.layout{grid-template-columns:1fr}.sidebar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.sidebar h3{grid-column:1/-1}.related{margin:0}}
+@media(max-width:600px){.page{padding:30px 16px}.navwrap{padding:0 16px}.search{display:none}.hero h1{font-size:30px}.heroicon{width:55px;height:55px}.subtitle{font-size:16px}.panel{padding:17px}.sidebar{grid-template-columns:1fr}.resultgrid{grid-template-columns:1fr}.crumb{margin-bottom:28px}}
+</style>
+</head>
+<body>
+<header class="topbar"><div class="navwrap">
+<a class="brand" href="#"><i data-lucide="wrench" width="34" height="34"></i><span>Tool-web</span></a>
+<nav class="navlinks"><a href="#">Trang chủ</a><a class="active" href="#">Công cụ</a><a href="#">Danh mục</a><a href="#">Bài viết</a><a href="#">Yêu thích</a><a href="#">Giới thiệu</a><a href="#">Liên hệ</a></nav>
+<div class="search"><i data-lucide="search" width="16" style="vertical-align:middle;margin-right:8px"></i>Tìm kiếm công cụ...</div>
+</div></header>
+<main class="page">
+<div class="crumb">Trang chủ&nbsp; / &nbsp;Công cụ hình ảnh&nbsp; / &nbsp;<b>Tối ưu hóa SVG</b></div>
+<div class="cluster">Thuộc danh mục <span class="pill">Công cụ hình ảnh</span> Công cụ tiện ích</div>
+<section class="hero"><div class="heroicon"><i data-lucide="image" width="32" height="32"></i></div><div><h1>Tối ưu hóa SVG</h1><div class="subtitle">Giảm dung lượng tệp SVG mà vẫn giữ nguyên hình ảnh</div></div><button class="heart" title="Thêm vào yêu thích"><i data-lucide="heart"></i></button></section>
+<p class="intro">Tải lên hoặc dán mã SVG để loại bỏ các thành phần không cần thiết, khoảng trắng dư thừa và chú thích. Xem trước kết quả, so sánh dung lượng trước và sau khi tối ưu, sau đó tải tệp đã xử lý về thiết bị.</p>
+<div class="stars" aria-label="Đánh giá"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+<div class="notice"><small><strong>◆ Bảo mật HTTPS</strong> &nbsp; | &nbsp; <strong>◆ Xử lý ngay trên trình duyệt</strong></small>Tệp SVG của bạn được xử lý trực tiếp trên thiết bị. Nội dung không được tải lên máy chủ.</div>
+<div class="layout"><div>
+<section class="panel">
+<div class="drop" id="dropZone">
+<i class="spark" data-lucide="sparkles" width="30" height="30"></i>
+<h3>Nhấn để chọn tệp SVG</h3><p>Hoặc kéo thả tệp SVG vào khu vực này</p><p>Bạn cũng có thể dán mã SVG từ bộ nhớ tạm</p>
+<button class="btn primary" id="chooseBtn" style="margin-top:14px">Chọn tệp SVG</button>
+<input type="file" id="fileInput" accept=".svg,image/svg+xml" hidden>
+</div>
+<label class="label" for="svgInput">Hoặc dán mã SVG tại đây</label>
+<textarea id="svgInput" spellcheck="false" placeholder="Dán toàn bộ mã SVG của bạn vào đây..."></textarea>
+<div class="actions">
+<button class="btn primary" id="optimizeBtn"><i data-lucide="wand-sparkles" width="16" style="vertical-align:middle;margin-right:6px"></i>Tối ưu ngay</button>
+<button class="btn outline" id="clearBtn">Xóa nội dung</button>
+</div>
+<div class="status" id="status">Chưa có tệp SVG. Hãy tải tệp lên hoặc dán mã SVG để bắt đầu.</div>
+<div class="result" id="result">
+<div class="resultgrid">
+<div class="metric"><span>Dung lượng ban đầu</span><b id="beforeSize">—</b></div>
+<div class="metric"><span>Dung lượng sau tối ưu</span><b id="afterSize">—</b></div>
+<div class="metric"><span>Đã giảm</span><b id="saved">—</b></div>
+</div>
+<div class="actions"><button class="btn primary" id="downloadBtn"><i data-lucide="download" width="16" style="vertical-align:middle;margin-right:6px"></i>Tải SVG đã tối ưu</button><button class="btn outline" id="copyBtn">Sao chép mã</button></div>
+</div>
+<div class="preview" id="preview"><label class="label">Xem trước hình ảnh sau tối ưu</label><div class="previewbox" id="previewBox"></div></div>
+</section>
+<div class="actions" style="margin:24px 0 30px;color:#64748b;align-items:center">Thao tác: <button class="btn outline" id="shareBtn"><i data-lucide="share-2" width="16" style="vertical-align:middle;margin-right:6px"></i>Chia sẻ</button></div>
+<section class="panel below"><h2>Cách sử dụng</h2><div class="steps"><div class="step"><span class="num">1</span>Chọn tệp SVG từ máy tính hoặc dán mã SVG vào ô nhập</div><div class="step"><span class="num">2</span>Nhấn nút “Tối ưu ngay” để xử lý nội dung</div><div class="step"><span class="num">3</span>Xem dung lượng được giảm và kiểm tra hình ảnh xem trước</div><div class="step"><span class="num">4</span>Nhấn “Tải SVG đã tối ưu” để lưu tệp về máy</div></div></section>
+<section class="panel below"><h2>Tính năng nổi bật</h2><div class="featurelist"><div>Loại bỏ chú thích và thông tin không cần thiết</div><div>Thu gọn khoảng trắng giữa các thẻ SVG</div><div>Giữ nguyên cấu trúc và nội dung hiển thị chính</div><div>So sánh dung lượng trước và sau khi xử lý</div><div>Xem trước và tải xuống ngay trên trình duyệt</div></div></section>
+</div>
+<aside class="sidebar"><h3>CÔNG CỤ LIÊN QUAN</h3>
+<a class="related" href="#"><div class="ico"><i data-lucide="image"></i></div><b>Thay đổi kích thước ảnh</b><p>Điều chỉnh chiều rộng, chiều cao của hình ảnh</p></a>
+<a class="related" href="#"><div class="ico"><i data-lucide="file-image"></i></div><b>Nén hình ảnh</b><p>Giảm dung lượng ảnh để tải trang nhanh hơn</p></a>
+<a class="related" href="#"><div class="ico"><i data-lucide="image-plus"></i></div><b>Chuyển ảnh sang PNG</b><p>Chuyển đổi hình ảnh sang định dạng PNG</p></a>
+<a class="related" href="#"><div class="ico"><i data-lucide="code"></i></div><b>Chuyển ảnh sang Base64</b><p>Mã hóa hình ảnh thành chuỗi Base64</p></a>
+</aside></div>
+<footer>© 2026 Tool-web · Công cụ trực tuyến miễn phí, dễ sử dụng và an toàn.</footer>
+</main>
+<script>
+lucide.createIcons();
+const $=id=>document.getElementById(id);
+let optimized='', originalName='hinh-anh.svg';
+function sizeText(n){if(n<1024)return n+' byte';if(n<1048576)return (n/1024).toFixed(2)+' KB';return (n/1048576).toFixed(2)+' MB'}
+function setStatus(msg,type=''){ $('status').textContent=msg;$('status').className='status '+type}
+function loadSvg(text,name='hinh-anh.svg'){ $('svgInput').value=text;originalName=name;setStatus('Đã nhận mã SVG. Nhấn “Tối ưu ngay” để tiếp tục.','good');$('result').classList.remove('show');$('preview').classList.remove('show')}
+function readFile(file){if(!file)return;if(!/\.svg$/i.test(file.name)&&file.type!=='image/svg+xml'){setStatus('Vui lòng chọn tệp có định dạng SVG.','error');return}const reader=new FileReader();reader.onload=()=>loadSvg(String(reader.result),file.name);reader.onerror=()=>setStatus('Không thể đọc tệp. Vui lòng thử lại.','error');reader.readAsText(file)}
+$('chooseBtn').addEventListener('click',e=>{e.stopPropagation();$('fileInput').click()});
+$('dropZone').addEventListener('click',e=>{if(e.target.id!=='chooseBtn')$('fileInput').click()});
+$('fileInput').addEventListener('change',e=>readFile(e.target.files[0]));
+['dragenter','dragover'].forEach(ev=>$('dropZone').addEventListener(ev,e=>{e.preventDefault();$('dropZone').classList.add('drag')}));
+['dragleave','drop'].forEach(ev=>$('dropZone').addEventListener(ev,e=>{e.preventDefault();$('dropZone').classList.remove('drag')}));
+$('dropZone').addEventListener('drop',e=>readFile(e.dataTransfer.files[0]));
+document.addEventListener('paste',e=>{const t=e.clipboardData?.getData('text/plain');if(t&&t.includes('<svg'))loadSvg(t.trim(),'svg-da-dan.svg')});
+function optimizeSvg(source){
+ let s=source.replace(/^\uFEFF/,'').trim();
+ if(!/<svg[\s>]/i.test(s))throw new Error('Mã nhập vào không chứa thẻ SVG hợp lệ.');
+ const doc=new DOMParser().parseFromString(s,'image/svg+xml');
+ if(doc.querySelector('parsererror'))throw new Error('Mã SVG không hợp lệ. Vui lòng kiểm tra lại nội dung.');
+ const root=doc.documentElement;if(root.localName.toLowerCase()!=='svg')throw new Error('Nội dung gốc không phải là tệp SVG.');
+ // Chỉ xóa các thành phần mô tả/định dạng dư thừa, không xóa phần tử đồ họa.
+ doc.childNodes.forEach(n=>{if(n.nodeType===8)n.remove()});
+ root.querySelectorAll('metadata, title, desc').forEach(n=>n.remove());
+ const walker=doc.createTreeWalker(root,NodeFilter.SHOW_COMMENT);const comments=[];while(walker.nextNode())comments.push(walker.currentNode);comments.forEach(n=>n.remove());
+ function clean(node){
+  [...node.childNodes].forEach(child=>{
+   if(child.nodeType===Node.TEXT_NODE){if(!child.nodeValue.trim())child.nodeValue='';else child.nodeValue=child.nodeValue.replace(/\s+/g,' ')}
+   else if(child.nodeType===Node.ELEMENT_NODE)clean(child);
+  });
+ }
+ clean(root);
+ let out=new XMLSerializer().serializeToString(root);
+ out=out.replace(/>\s+</g,'><').replace(/\s{2,}/g,' ').trim();
+ return out;
+}
+$('optimizeBtn').addEventListener('click',()=>{
+ const source=$('svgInput').value.trim();if(!source){setStatus('Bạn chưa nhập mã hoặc chọn tệp SVG.','error');return}
+ try{
+  optimized=optimizeSvg(source);
+  const before=new Blob([source]).size,after=new Blob([optimized]).size;
+  const reduction=before?Math.max(0,(1-after/before)*100):0;
+  $('beforeSize').textContent=sizeText(before);$('afterSize').textContent=sizeText(after);$('saved').textContent=(after<=before?reduction:0).toFixed(1)+'%';
+  $('result').classList.add('show');$('previewBox').innerHTML=optimized;$('preview').classList.add('show');
+  setStatus(after<=before?'Đã tối ưu SVG thành công!':'Đã xử lý xong. Mã SVG này không giảm dung lượng sau khi tối ưu.','good');
+ }catch(err){setStatus(err.message||'Có lỗi khi xử lý SVG.','error');$('result').classList.remove('show');$('preview').classList.remove('show')}
+});
+$('downloadBtn').addEventListener('click',()=>{if(!optimized)return;const blob=new Blob([optimized],{type:'image/svg+xml;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=originalName.replace(/\.svg$/i,'')+'-optimized.svg';a.click();URL.revokeObjectURL(url)});
+$('copyBtn').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(optimized);setStatus('Đã sao chép mã SVG đã tối ưu.','good')}catch{setStatus('Trình duyệt không cho phép sao chép tự động.','error')}});
+$('clearBtn').addEventListener('click',()=>{$('svgInput').value='';$('fileInput').value='';optimized='';$('result').classList.remove('show');$('preview').classList.remove('show');setStatus('Đã xóa nội dung. Bạn có thể bắt đầu lại.')});
+$('shareBtn').addEventListener('click',async()=>{try{if(navigator.share)await navigator.share({title:'Tối ưu hóa SVG - Tool-web',url:location.href});else{await navigator.clipboard.writeText(location.href);setStatus('Đã sao chép liên kết công cụ.','good')}}catch{}});
+</script>
+</body></html>
